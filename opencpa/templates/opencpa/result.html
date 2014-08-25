@@ -1,0 +1,32 @@
+{% extends "opencpa/layout.html" %}
+
+{% load staticfiles %}
+
+{% block head-scripts %}
+
+<script>
+	var jobdata = {{ jobdata | safe }}
+	var sysdata = {{ sysdata | safe }}
+	var historydata = {{ historydata | safe }}
+	var placedata = {{ placedata | safe }}
+</script>
+
+{% endblock%}
+
+{% block content %}
+
+<p class="list-sum">
+	查詢 <span id="filter-name"></span> 類科，<span id="area"></span> 共 <span id="count"></span> 筆職缺。變更排序：
+	<button id="sortByRank" type="button" class="btn btn-success">職等</button>
+	<button id="sortByArea" type="button" class="btn btn-success">工作縣市</button>
+</p>
+
+<div class="list"><img id="loading" src="imgs/loading.gif" alt="Loading..." /></div>
+
+{% endblock%}
+
+{% block scripts %}
+
+<script src="{% static 'opencpa/scripts/result.js' %}"></script>
+
+{% endblock %}
