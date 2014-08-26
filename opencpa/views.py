@@ -140,9 +140,8 @@ def index(request):
             'twDate': twDate.strftime('%Y/%m/%d'),
         })
         
-        return HttpResponse(sysdata)
-
     elif request.method == 'POST':
         return HttpResponse("Invalid Request")
     
-
+def about(request):
+    return render(request, 'opencpa/about.html')

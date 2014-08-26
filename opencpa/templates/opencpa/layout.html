@@ -49,35 +49,11 @@
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li class="dropdown">
-                <a href="./" class="dropdown-toggle" data-toggle="dropdown">行政類<span class="caret"></span></a>
-                <ul class="dropdown-menu name-filter" role="menu" id="sys_admin">
-                </ul>
-              </li>
-              <li class="dropdown">
-                <a href="./" class="dropdown-toggle" data-toggle="dropdown">技術類<span class="caret"></span></a>
-                <ul class="dropdown-menu name-filter" role="menu" id="sys_tech">
-                </ul>
-              </li>
-              <li class="dropdown">
-                <a href="./" class="dropdown-toggle" data-toggle="dropdown">選擇地區<span class="caret"></span></a>
-                <ul class="dropdown-menu area-filter" role="menu">
-					<li><a href="#">不限地區</a></li>
-					<li><a href="#">大台北地區</a></li>
-					<li><a href="#">桃竹苗地區</a></li>
-					<li><a href="#">中彰投地區</a></li>
-					<li><a href="#">雲嘉南地區</a></li>
-					<li><a href="#">高屏地區</a></li>
-					<li><a href="#">基宜地區</a></li>
-					<li><a href="#">花東地區</a></li>
-					<li><a href="#">離島地區</a></li>
-                </ul>
-              </li>
-			  <li><a href="./">關於</a></li>
-			{% block navbar %}{% endblock %}
+              {% block navbar %}{% endblock %}
+			  <li><a href="./about">關於</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li><a>資料日期：{{ twDate }}</a></li>
+              {% block navbar-right %}{% endblock %}
             </ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->

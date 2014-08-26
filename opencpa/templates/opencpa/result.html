@@ -3,18 +3,48 @@
 {% load staticfiles %}
 
 {% block head-scripts %}
-
 <script>
 	var jobdata = {{ jobdata | safe }}
 	var sysdata = {{ sysdata | safe }}
 	var historydata = {{ historydata | safe }}
 	var placedata = {{ placedata | safe }}
 </script>
-
 {% endblock%}
 
-{% block content %}
 
+{% block navbar %}
+    <li class="dropdown">
+        <a href="./" class="dropdown-toggle" data-toggle="dropdown">行政類<span class="caret"></span></a>
+        <ul class="dropdown-menu name-filter" role="menu" id="sys_admin">
+        </ul>
+    </li>
+    <li class="dropdown">
+        <a href="./" class="dropdown-toggle" data-toggle="dropdown">技術類<span class="caret"></span></a>
+        <ul class="dropdown-menu name-filter" role="menu" id="sys_tech">
+        </ul>
+    </li>
+    <li class="dropdown">
+        <a href="./" class="dropdown-toggle" data-toggle="dropdown">選擇地區<span class="caret"></span></a>
+        <ul class="dropdown-menu area-filter" role="menu">
+            <li><a href="#">不限地區</a></li>
+            <li><a href="#">大台北地區</a></li>
+            <li><a href="#">桃竹苗地區</a></li>
+            <li><a href="#">中彰投地區</a></li>
+            <li><a href="#">雲嘉南地區</a></li>
+            <li><a href="#">高屏地區</a></li>
+            <li><a href="#">基宜地區</a></li>
+            <li><a href="#">花東地區</a></li>
+            <li><a href="#">離島地區</a></li>
+        </ul>
+    </li>
+{% endblock %}
+
+{% block navbar-right %}
+    <li><a>資料日期：{{ twDate }}</a></li>
+{% endblock%}
+
+
+{% block content %}
 <p class="list-sum">
 	查詢 <span id="filter-name"></span> 類科，<span id="area"></span> 共 <span id="count"></span> 筆職缺。變更排序：
 	<button id="sortByRank" type="button" class="btn btn-success">職等</button>
@@ -22,11 +52,8 @@
 </p>
 
 <div class="list"><img id="loading" src="imgs/loading.gif" alt="Loading..." /></div>
-
 {% endblock%}
 
 {% block scripts %}
-
 <script src="{% static 'opencpa/scripts/result.js' %}"></script>
-
 {% endblock %}
