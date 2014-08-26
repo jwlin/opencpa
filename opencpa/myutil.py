@@ -71,7 +71,7 @@ def replaceChNum(s):
         s = s.replace(pattern2[i], replacement[i])
     s = s.replace(u'乙', '1')
     # delete extra 0. ex. 104 -> 14
-    re.sub('(10[0-9])',lambda m: m.group(0).replace('10', '1'), s)
+    s = re.sub('(10[0-9])',lambda m: m.group(0).replace('10', '1'), s)
     return s
 
 # convert RANK field to a rank obj.
