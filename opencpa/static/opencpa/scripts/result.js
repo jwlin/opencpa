@@ -92,10 +92,21 @@ function display() {
 				+ "<dt>工作地址</dt>"
 				+ "<dd>" + jobdata[i]["fields"]["work_addr"] + "</dd>"
 				+ "<dt>聯絡方式</dt>"
-				+ "<dd>" + jobdata[i]["fields"]["contact"] + "</dd>"
-				+ "<dt>原職缺網址</dt>"
-				+ "<dd><a href='" + jobdata[i]["fields"]["view_url"] + "' target='_blank'>前往</a></dd>";
-			
+				+ "<dd>" + jobdata[i]["fields"]["contact"] + "</dd>";
+
+            // check specific qualifications
+            var qual = [];
+            if (jobdata[i]["fields"]["is_handicap"]) qual.push("✔歡迎身障應徵");
+            if (jobdata[i]["fields"]["is_orig"]) qual.push("✔歡迎原民應徵");
+            if (jobdata[i]["fields"]["is_local_orig"]) qual.push("✔原民地區職缺");
+            if (jobdata[i]["fields"]["is_training"]) qual.push("✔人事進階專班");
+            if (qual.length > 0) {
+                detail += "<dt>特殊條件</dt><dd>" + qual.join("&nbsp;&nbsp;") + "</dd>";
+            }
+
+		    detail += "<dt>原職缺網址</dt>"
+				+ "<dd><a href='" + jobdata[i]["fields"]["view_url"] + "' target='_blank'>前往</a></dd>"
+            
 			// check history count and info
 			if (parseInt(jobdata[i]["fields"]["history_count"]) > 1) {
 				detail += "<dt>近期開缺紀錄</dt><dd>"+ jobdata[i]["fields"]["history_count"]  + " 次 (";

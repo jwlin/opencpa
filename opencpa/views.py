@@ -11,24 +11,14 @@ import re
 import myutil 
 import json
 
-xml_url = 'http://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx?GETJOB=Y'
+#xml_url = 'http://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx?GETJOB=Y'
 
 def index(request):
-    #return HttpResponse("BLAST Page: create.")
-    """
-	check today == last update
-	if yes, 
-		display from db
-		read from current_job
-		select form job_history, work_quality. qork_item
-	if not, 
-		read xml
-		for each row in xml
-			get job id (compare with job_repo)
-			put job id and other in current_job
-			put job id and date_from date_to in job_history
-    """
     if request.method == 'GET':
+        """
+        The retrieving xml and updating db part is moved seperately to ../updatexml.py and run by crontab.
+        It is not triggered by user request anymore
+
         # ensure data in CurrentJob is up to date
         twDate = (datetime.utcnow() + timedelta(hours=8)).date()
         ur = UpdateRecord.objects.all()[0]
@@ -98,6 +88,7 @@ def index(request):
 
             ur.last_update_day = twDate
             ur.save()
+        """
         
         # retrieve and display data in CurrentJob
         jobdata = serializers.serialize('json', CurrentJob.objects.all())
@@ -137,7 +128,7 @@ def index(request):
             'historydata': historydata,
             'sysdata': sysdata,
             'placedata': json.dumps(placedata),
-            'twDate': twDate.strftime('%Y/%m/%d'),
+            'twDate': UpdateRecord.objects.all()[0].last_update_day.strftime('%Y/%m/%d'),
         })
         
     elif request.method == 'POST':
