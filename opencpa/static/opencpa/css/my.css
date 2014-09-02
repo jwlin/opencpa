@@ -1,15 +1,31 @@
-body {background-image:url('../imgs/sandpaper.png');}
+body {
+	background-image:url('../imgs/sandpaper.png');
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.navbar {
+		margin-bottom: 20px;
+}
+
 .panel-heading { cursor: pointer;}
+
 div.headinfo { visibility: hidden;}
+
 div.about { display: none;}
+
 #filter-name, #count, #area { font-weight:bold;}
+
 #loading {
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
+
 h2 {text-align:center;}
+
 .reminder {font-size: small; color:yellow;}
+
 div.header a:link { color: #285e8e;}
 div.header a:visited { color: #285e8e;}
 div.header a:hover { color: #3276b1; }
