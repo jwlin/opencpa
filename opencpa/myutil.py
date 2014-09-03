@@ -105,7 +105,7 @@ def convertBoolean(s):
 # judge if a sysnam belongs to tech or admin type.
 # admin: return 0. tech: return 1
 def judge_type(sysnam):
-    adminlist = [u'無', u'政', u'新聞', u'法制', u'社會工作', u'醫務管理', u'會計', u'統計', u'會計', u'審計', u'金融保險']
+    adminlist = [u'無', u'政', u'新聞', u'法制', u'社會工作', u'醫務管理', u'會計', u'統計', u'會計', u'審計', u'金融保險', u'圖書資訊管理']
     for keyword in adminlist:
         if keyword in sysnam:
             return 0
