@@ -8,7 +8,8 @@ def getxml(xml_path):
     xml_file = urllib2.urlopen(xml_path)
     tree = ET.parse(xml_file)
     root = tree.getroot()
-    unqualified_list = [u'約僱人員',u'駐外人員',u'代理教師',u'代課教師',u'實習老師',u'其他人員',u'聘用人員']; # 非公務人員
+    #unqualified_list = [u'約僱人員',u'駐外人員',u'代理教師',u'代課教師',u'實習老師',u'其他人員',u'聘用人員']; # 非公務人員
+    unqualified_list = [u'約僱人員',u'駐外人員',u'代理教師',u'代課教師',u'實習老師',u'聘用人員']; # 非公務人員
     jobs = []
     for row in root.findall('ROW'):
         person_kind = row.find('PERSON_KIND').text
