@@ -1,6 +1,7 @@
 # vim: set ts=4 sw=4 et: -*- coding: utf-8 -*-
 
-import os
+import os, sys
+sys.path.append(os.path.join(os.path.abspath('..')))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "castman_net.settings")
 
 from datetime import datetime, timedelta, date
@@ -18,9 +19,14 @@ if twDate != ur.last_update_day: # data is old, update them
     xml_jobs = myutil.getxml(xml_url)
     CurrentJob.objects.all().delete()
     for xml_job in xml_jobs:
+        # filter unqualified sysnam
+        sysname = xml_job['sysnam']
+        if not myutil.filter(sysname, myutil.judge_type(sysname)):
+            continue
+
         c_job = CurrentJob()
         c_job.title = xml_job['title']
-        c_job.sysnam = xml_job['sysnam']
+        c_job.sysnam = sysname
         c_job.org_name = xml_job['org_name']
         c_job.person_kind = xml_job['person_kind']
         c_job.rank_from = int(xml_job['rank']['from'])

@@ -3,13 +3,17 @@
 import glob, re, json, codecs, urllib2
 import xml.etree.ElementTree as ET
 import datetime
+from django.conf import settings
+from os import path
 
 def getxml(xml_path):
     xml_file = urllib2.urlopen(xml_path)
     tree = ET.parse(xml_file)
     root = tree.getroot()
-    #unqualified_list = [u'約僱人員',u'駐外人員',u'代理教師',u'代課教師',u'實習老師',u'其他人員',u'聘用人員']; # 非公務人員
-    unqualified_list = [u'約僱人員',u'駐外人員',u'代理教師',u'代課教師',u'實習老師',u'聘用人員']; # 非公務人員
+    unqualified_list = [] # 非公務人員
+    with open(path.join(settings.BASE_DIR, 'opencpa', 'filters', 'unqualified-list.txt')) as fp:
+        for line in fp:
+            unqualified_list.append(line.replace('\n','').replace('\r', '').decode('utf-8'))
     jobs = []
     for row in root.findall('ROW'):
         person_kind = row.find('PERSON_KIND').text
@@ -106,9 +110,35 @@ def convertBoolean(s):
 # judge if a sysnam belongs to tech or admin type.
 # admin: return 0. tech: return 1
 def judge_type(sysnam):
-    adminlist = [u'無', u'政', u'新聞', u'法制', u'社會工作', u'醫務管理', u'會計', u'統計', u'會計', u'審計', u'金融保險', u'圖書資訊管理']
+    adminlist = []
+    with open(path.join(settings.BASE_DIR, 'opencpa','filters', 'adminlist.txt')) as fp:
+        for line in fp:
+            adminlist.append(line.replace('\n','').replace('\r', '').decode('utf-8'))
+
     for keyword in adminlist:
         if keyword in sysnam:
             return 0
     return 1
 
+def filter(sysnam, judge_type):
+    sysnam_exclude = []
+    with open(path.join(settings.BASE_DIR, 'opencpa', 'filters', 'sysnam-filter-exclude.txt')) as fp:
+        for line in fp:
+            sysnam_exclude.append(line.replace('\n','').replace('\r', '').decode('utf-8'))
+
+    sysnam_list = [[],[]]
+    with open(path.join(settings.BASE_DIR, 'opencpa', 'filters', 'sysnam-filter-ad.txt')) as fp:
+        for line in fp:
+            sysnam_list[0].append(line.replace('\n','').replace('\r', '').decode('utf-8'))
+    with open(path.join(settings.BASE_DIR, 'opencpa', 'filters', 'sysnam-filter-tech.txt')) as fp:
+        for line in fp:
+            sysnam_list[1].append(line.replace('\n','').replace('\r', '').decode('utf-8'))
+    
+    for word in sysnam_exclude:
+        if word in sysnam:
+            return False
+
+    for word in sysnam_list[judge_type]:
+        if word in sysnam:
+            return True
+    return False
