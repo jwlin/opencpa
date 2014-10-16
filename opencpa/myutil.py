@@ -120,7 +120,7 @@ def judge_type(sysnam):
             return 0
     return 1
 
-def filter(sysnam, judge_type):
+def filter(sysnam):
     sysnam_exclude = []
     with open(path.join(settings.BASE_DIR, 'opencpa', 'filters', 'sysnam-filter-exclude.txt')) as fp:
         for line in fp:
@@ -138,7 +138,8 @@ def filter(sysnam, judge_type):
         if word in sysnam:
             return False
 
-    for word in sysnam_list[judge_type]:
-        if word in sysnam:
-            return True
+    for sublist in sysnam_list:
+        for word in sublist:
+            if word in sysnam:
+                return True
     return False

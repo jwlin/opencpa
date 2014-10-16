@@ -21,7 +21,7 @@ if twDate != ur.last_update_day: # data is old, update them
     for xml_job in xml_jobs:
         # filter unqualified sysnam
         sysname = xml_job['sysnam']
-        if not myutil.filter(sysname, myutil.judge_type(sysname)):
+        if not myutil.filter(sysname):
             continue
 
         c_job = CurrentJob()

@@ -13,12 +13,16 @@ flist = []
 oklist = []
 
 xml_jobs = myutil.getxml(xml_url)
+from time import time
+t0 = time()
 for xml_job in xml_jobs:
     sysname = xml_job['sysnam']
-    if not myutil.filter(sysname, myutil.judge_type(sysname)):
+    if not myutil.filter(sysname):
         flist.append(sysname)
     else:
         oklist.append(sysname)
+t1 = time()
+print 'function vers1 takes %f' %(t1-t0)
 print 'fileter done'        
 for e in flist:
     print e
@@ -27,4 +31,3 @@ print '--- ok start'
 
 for e in oklist:
     print e
-
