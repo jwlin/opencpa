@@ -1,7 +1,7 @@
 var areas = ["all",[10, 23], [30, 31, 32, 35], [42, 50, 54], [60, 61, 63, 72], [82, 90], [24, 26], [95, 97], [101, 168, 169]];
-var areaIndex = 0;
+var areaIndex = [0];
 var criterion = "RANK";
-var sysnam = "資訊處理";
+var sysnam = ["資訊處理"];
 
 $(function () { // document ready
 
@@ -39,14 +39,60 @@ $(function () { // document ready
 
 	$( "ul.name-filter li" ).click(function( event ) {
 		event.preventDefault();
-		sysnam = $(this).text().split(" ")[0];
+		$(this).toggleClass('active');
+		
+		// get all the selected sysnam
+		sysnam = [];
+		$( "ul.name-filter li" ).each(function() {
+			if ( $(this).hasClass("active") ) {
+				sysnam.push($(this).text().split(" ")[0]);
+			}
+		});
+
+		event.stopPropagation(); // keep the dropdown menu open
 		display();
 	});
 
 	$( "ul.area-filter li" ).click(function( event ) {
 		event.preventDefault();
-		area = $(this).text();
-		areaIndex = $(this).index()
+		$(this).toggleClass('active');
+		
+		if ($(this).index()==0) {	// select all
+			if ( $(this).hasClass("active") ) {
+				$( "ul.area-filter li" ).each(function() {
+					$(this).addClass( "active" );
+				});
+			}
+			else {
+				$( "ul.area-filter li" ).each(function() {
+					$(this).removeClass( "active" );
+				});				
+			}
+		}
+
+		// check if all indices are selected
+		var isAllSelected = true;
+		$( "ul.area-filter li:gt(0)" ).each(function() {
+			if ( !$(this).hasClass("active") ) {
+				isAllSelected = false;
+			}
+		});
+		if (isAllSelected) {
+			$( "ul.area-filter li:eq(0)").addClass("active");
+		}
+		else {
+			$( "ul.area-filter li:eq(0)").removeClass("active");
+		}
+
+		// get all the selected area indices
+		areaIndex = []
+		$( "ul.area-filter li" ).each(function(index) {
+			if ( $(this).hasClass("active") ) {
+				areaIndex.push(index);
+			}
+		});
+		
+		event.stopPropagation(); // keep the dropdown menu open
 		display();
 	});
 });
@@ -60,19 +106,27 @@ function display() {
 	var count=0;
 	for (var i=0; i<jobdata.length; ++i) {
 		var isInArea = false;
-		if (areaIndex != 0) { // 限地區，需檢查
+		if ( areaIndex.indexOf(0) == -1) { // 限地區，需檢查
 			var work_places_id = JSON.parse(jobdata[i]["fields"]["work_places_id"]);
 			for (var j=0; j<work_places_id.length; ++j) {
-				if (areas[areaIndex].indexOf(work_places_id[j]) != -1) { // work_place_type.id 在 areas 內
-					isInArea = true;
+				for (var k=0; k<areaIndex.length; ++k) {
+					if (areas[areaIndex[k]].indexOf(work_places_id[j]) != -1) { // work_place_type.id 在 areas 內
+						isInArea = true;
+					}
 				}
 			}
 		}
 		else {
 			isInArea = true
 		}
-
-		if ((jobdata[i]["fields"]["sysnam"].indexOf(sysnam) > -1) && (isInArea)) {
+		
+		var isInSysnam = false;
+		for (var j=0; j<sysnam.length; ++j) {
+			if (jobdata[i]["fields"]["sysnam"].indexOf(sysnam[j]) > -1) {
+				isInSysnam = true;
+			}
+		}
+		if (isInSysnam && isInArea) {
 			// construct the detail for panel-body
 			var detail = "<dl class='dl-horizontal'>"
 				+ "<dt>有效期間</dt>"
@@ -156,8 +210,27 @@ function display() {
 		$(this).siblings(".panel-body").toggle(200);
 	});	
 	$("#count").text(count);
-	$("#filter-name").text(sysnam);
-	$("#area").text( $("ul.area-filter li").eq(areaIndex).text() );
+
+	// display selected sysnam
+	var sysnam_text = [];
+	for (var i=0; i<sysnam.length; ++i) {
+		sysnam_text.push(sysnam[i]);
+	}
+	$("#filter-name").text( sysnam_text.join("、") );
+
+	// display selected areas
+	if ( areaIndex.indexOf(0) != -1 ) {
+		$("#area").text( $("ul.area-filter li:eq(0)").text() );
+	}
+	else {
+		var area_text = [];
+		$( "ul.area-filter li:gt(0)" ).each(function() {
+			if ( $(this).hasClass("active") ) {
+				area_text.push($(this).text());
+			}
+		});
+		$("#area").text( area_text.join("、") );
+	}
 }
 
 function sortjobdata(criterion) {
