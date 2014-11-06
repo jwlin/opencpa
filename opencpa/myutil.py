@@ -1,14 +1,29 @@
 # vim: set ts=4 sw=4 et: -*- coding: utf-8 -*-
 
-import glob, re, json, codecs, urllib2
+import glob, re, json, codecs, requests
 import xml.etree.ElementTree as ET
 import datetime
 from django.conf import settings
 from os import path
+from bs4 import BeautifulSoup
 
 def getxml(xml_path):
-    xml_file = urllib2.urlopen(xml_path)
-    tree = ET.parse(xml_file)
+    # first HTTP request without form data
+    resp = requests.get(xml_path, verify=False)
+    soup = BeautifulSoup(resp.text)
+    # parse and retrieve 3 vital form values
+    viewstate = soup.select("#__VIEWSTATE")[0]['value']
+    eventvalidation = soup.select("#__EVENTVALIDATION")[0]['value']
+    viewstategenerator = soup.select("#__VIEWSTATEGENERATOR")[0]['value']
+    formData = {
+        '__EVENTVALIDATION': eventvalidation,
+        '__VIEWSTATE': viewstate,
+        '__VIEWSTATEGENERATOR': viewstategenerator,
+        'ctl00$ContentPlaceHolder1$btn_DownloadXML': '職缺 Open Data(XML)'
+    }
+    header = {'Content-Type': 'application/x-www-form-urlencoded'}
+    resp = requests.post(xml_path, verify=False, stream=True, data=formData, headers=header)
+    tree = ET.parse(resp.raw)
     root = tree.getroot()
     unqualified_list = [] # 非公務人員
     with open(path.join(settings.BASE_DIR, 'opencpa', 'filters', 'unqualified-list.txt')) as fp:
@@ -63,7 +78,6 @@ def getxml(xml_path):
                 'view_url': row.find('VIEW_URL').text,
             }
             jobs.append(job)
-    xml_file.close()
     return jobs
 
 # replace Chinese Number with digital one

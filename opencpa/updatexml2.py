@@ -7,12 +7,14 @@ from opencpa.models import *
 from opencpa import myutil
 import re
 
-xml_url = 'http://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx?GETJOB=Y'
+xml_url = 'https://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx'
 
 flist = []
 oklist = []
 
 xml_jobs = myutil.getxml(xml_url)
+print xml_jobs
+'''
 from time import time
 t0 = time()
 for xml_job in xml_jobs:
@@ -31,3 +33,4 @@ print '--- ok start'
 
 for e in oklist:
     print e
+'''
