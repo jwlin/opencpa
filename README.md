@@ -12,3 +12,17 @@
  - 「人員類別」為「約僱人員、駐外人員、代理教師、代課教師、實習老師、聘用人員」
 
 簡單來說就是過濾掉非公務人員
+
+### Running on localhost:
+This app is developed with Django.
+```
+pip install -r requirements/local.txt
+python manage.py runserver --settings=opencpa.settings.local
+```
+### Deployment (Apache & mod_wsgi)
+```
+pip install -r requirements/production.txt
+python manage.py collectstatic --settings=opencpa.settings.production
+cp opencpa/settings/opencpa.conf /etc/httpd/conf.d/
+```
+and change corresponding settings in `opencpa.conf`.
