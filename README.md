@@ -19,6 +19,7 @@ This app is developed with Django.
 pip install -r requirements/local.txt
 python manage.py runserver --settings=opencpa.settings.local
 ```
+Update DB daily with `python opencpa/job/updatexml.py`.
 ### Deployment (Apache & mod_wsgi)
 ```
 pip install -r requirements/production.txt
