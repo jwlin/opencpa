@@ -9,7 +9,8 @@ from job.models import *
 from job import myutil
 import re 
 
-xml_url = 'https://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx'
+#xml_url = 'https://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx'
+xml_url = 'http://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx?GETJOB=Y'
 
 # ensure data in CurrentJob is up to date
 twDate = (datetime.utcnow() + timedelta(hours=8)).date()
