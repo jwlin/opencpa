@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta property="og:type" content="website">
 	<meta property="og:url" content="http://opencpa.castman.net">
-	<meta property="og:title" content="人事行政總處事求人(開放資料版)">
+	<meta property="og:title" content="人事行政總處事求人開放資料版">
 	<meta property="og:description" content="將人事行政總處事求人網站每日的職缺開放資料以更直覺的方式呈現">
     <!--<link rel="icon" href="http://getbootstrap.com/favicon.ico">-->
 
-    <title>人事行政總處事求人(開放資料版)</title>
+	<title>{% block title %}{{ title }} | 人事行政總處事求人開放資料版 {% endblock %}</title>
 	<meta name="description" content="將人事行政總處事求人網站每日的職缺開放資料以更直覺的方式呈現">
     <meta name="keywords" content="人事行政總處 事求人 開放資料 open data">
 
@@ -33,7 +33,6 @@
 	{% block head-scripts %}{% endblock %}
 </head>
   <body screen_capture_injected="true">
-
     <div class="container">
 
       <!-- Static navbar -->
@@ -46,12 +45,11 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="./">人事行政總處事求人(開放資料版)</a>
+            <a class="navbar-brand" href="./">人事行政總處事求人開放資料版</a>
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               {% block navbar %}{% endblock %}
-			  <li><a href="./about">關於</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               {% block navbar-right %}{% endblock %}
@@ -67,7 +65,7 @@
 
 	  <footer>
 	  	<hr />
-	  	<p style="text-align: center;">© 2014 <a href="http://castman.net" target="_blank">castman</a>. 本站職缺資料來自<a href="https://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx" target="_blank">人事行政總處事求人網站開放資料</a>，若有疑義請以原始網站資料為準</p>
+	  	<p style="text-align: center;">© {{ year|default:"2015" }} <a href="http://castman.net" target="_blank">castman</a>. 本站職缺資料來自<a href="https://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx" target="_blank">人事行政總處事求人網站開放資料</a>，若有疑義請以原始網站資料為準</p>
 	  </footer>
 
     </div> <!-- /container -->

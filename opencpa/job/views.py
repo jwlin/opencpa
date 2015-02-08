@@ -1,8 +1,10 @@
 # vim: set ts=4 sw=4 et: -*- coding: utf-8 -*-
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.core.urlresolvers import reverse
 from datetime import datetime, timedelta, date
 from django.db.models import Count
+from django.forms.models import model_to_dict
 from django.core import serializers
 from .models import *
 import os
@@ -10,8 +12,6 @@ import urllib2
 import re
 import myutil 
 import json
-
-#xml_url = 'http://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx?GETJOB=Y'
 
 def index(request):
     if request.method == 'GET':
@@ -55,10 +55,51 @@ def index(request):
             'sysdata': sysdata,
             'placedata': json.dumps(placedata),
             'twDate': UpdateRecord.objects.all()[0].last_update_day.strftime('%Y/%m/%d'),
+            'year': datetime.now().year,
+            'title': '職缺列表',
         })
         
     elif request.method == 'POST':
-        return HttpResponse("Invalid Request")
+        raise Http404()
     
 def about(request):
-    return render(request, 'job/about.html')
+    return render(
+        request, 
+        'job/about.html', {
+        'year': datetime.now().year,
+        'title':'關於', 
+    })
+
+def item(request, job_id):
+    isExpired = False
+    try:
+        job = CurrentJob.objects.get(job__id=job_id)
+    except CurrentJob.DoesNotExist:
+        isExpired = True
+        try:
+            job = Job.objects.get(id=job_id)
+        except Job.DoesNotExist:
+            return HttpResponseRedirect(reverse('job:index'))
+    job = model_to_dict(job)
+    
+    places = WorkPlace.objects.values('work_place_id', 'work_place_name')
+    placedata = {}
+    for place in places:
+        placedata[place['work_place_id']] = place['work_place_name']
+    
+    history_dates = list(JobHistory.objects.values('date_from', 'date_to').filter(job__id=job_id).order_by('date_from'))
+
+    dthandler = lambda obj: (
+        obj.isoformat() if isinstance(obj, date) else None
+    )
+    return render(
+        request, 
+        'job/item.html', {
+        'year': datetime.now().year,
+        'jobdata': json.dumps(job, default=dthandler),
+        'placedata': json.dumps(placedata),
+        'historydata': json.dumps(history_dates, default=dthandler),
+        'isExpired': isExpired,
+        'title':'單筆職缺資料', 
+    })
+        

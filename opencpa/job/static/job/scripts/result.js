@@ -158,8 +158,9 @@ function display() {
                 detail += "<dt>特殊條件</dt><dd>" + qual.join("&nbsp;&nbsp;") + "</dd>";
             }
 
-		    detail += "<dt>原職缺網址</dt>"
-				+ "<dd><a href='" + jobdata[i]["fields"]["view_url"] + "' target='_blank'>前往</a></dd>"
+		    detail += "<dt>本職缺網址</dt>"
+				+ "<dd><a href='http://" + window.location.host + window.location.pathname + jobdata[i]["fields"]["job"] +"' target='_blank'>本站</a>&nbsp;&nbsp;"
+				+ "<a href='" + jobdata[i]["fields"]["view_url"] + "' target='_blank'>人事行政總處</a></dd>";
             
 			// check history count and info
 			if (parseInt(jobdata[i]["fields"]["history_count"]) > 1) {
@@ -179,7 +180,7 @@ function display() {
 			detail += "</dl>";
 																							
 			// draw the panel
-			var panel = "<div class='panel panel-primary'><div class='panel-heading'>"
+			var panel = "<div class='panel panel-primary'><div class='panel-heading panel-heading-cursor'>"
 				+ "<h3 class='panel-title'>" + jobdata[i]["fields"]["rank_from"] + "-" + jobdata[i]["fields"]["rank_to"] + " 職等 / ";
 
 			// convert place_id array to place names

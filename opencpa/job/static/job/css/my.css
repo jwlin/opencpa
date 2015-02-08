@@ -8,7 +8,7 @@ body {
 		margin-bottom: 20px;
 }
 
-.panel-heading { cursor: pointer;}
+.panel-heading-cursor { cursor: pointer;}
 
 div.headinfo { visibility: hidden;}
 

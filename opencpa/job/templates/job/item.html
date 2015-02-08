@@ -1,0 +1,28 @@
+{% extends "job/layout.html" %}
+{% load staticfiles %}
+
+{% block navbar %}
+	<li><a href="./{{job_id}}">單筆職缺資料</a></li>
+{% endblock %}
+
+{% block head-scripts %}
+<script>
+	var jobdata = {{ jobdata | safe }}
+	var historydata = {{ historydata | safe }}
+	var placedata = {{ placedata | safe }}
+	{% if isExpired %}
+		var isExpired = true;
+	{% else %}
+		var isExpired = false;
+	{% endif %}
+</script>
+{% endblock%}
+
+{% block content %}
+<div id="item">
+</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{% static 'job/scripts/item.js' %}"></script>
+{% endblock %}
