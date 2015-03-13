@@ -47,6 +47,11 @@ def index(request):
         for place in places:
             placedata[place['work_place_id']] = place['work_place_name']
 
+        with open('job/messages.json', 'r') as f:
+            messages = json.load(f)
+            if messages:
+                messages = list(messages['messages'])
+
         return render(
             request,
             'job/result.html', {
@@ -57,6 +62,7 @@ def index(request):
             'twDate': UpdateRecord.objects.all()[0].last_update_day.strftime('%Y/%m/%d'),
             'year': datetime.now().year,
             'title': '職缺列表',
+            'messages': messages,
         })
         
     elif request.method == 'POST':

@@ -1,9 +1,6 @@
 {% extends "job/layout.html" %}
 {% load staticfiles %}
 
-{% block navbar %}
-	<li><a href="./{{job_id}}">單筆職缺資料</a></li>
-{% endblock %}
 
 {% block head-scripts %}
 <script>
@@ -18,9 +15,14 @@
 </script>
 {% endblock%}
 
+
+{% block navbar %}
+	<li><a href="./{{job_id}}">單筆職缺資料</a></li>
+{% endblock %}
+
+
 {% block content %}
-<div id="item">
-</div>
+<div id="item"></div>
 {% endblock %}
 
 {% block scripts %}

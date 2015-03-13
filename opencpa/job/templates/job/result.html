@@ -51,9 +51,23 @@
 	<button id="sortByRank" type="button" class="btn btn-success">職等</button>
 	<button id="sortByArea" type="button" class="btn btn-success">工作縣市</button>
 </p>
+<div class="row">
+<div class="col-md-9 list"></div>
+<div class="col-md-3">
+  <ul class="list-group">
+	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">最新留言</li>
+	{% if messages %}
+	  {% for message in messages %}
+	  <li class="list-group-item"><a href="./{{message.jobid}}" target="_blank">{{message.jobname}}</a><br>{{message.content}}</li>
+	  {% endfor %}
+	{% else %}
+	  <li class="list-group-item">暫無留言</li>
+	{% endif %}
+  </ul>
+</div>
 
-<div class="list"></div>
 {% endblock%}
+
 
 {% block scripts %}
 <script src="{% static 'job/scripts/result.js' %}"></script>
