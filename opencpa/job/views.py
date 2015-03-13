@@ -47,7 +47,7 @@ def index(request):
         for place in places:
             placedata[place['work_place_id']] = place['work_place_name']
 
-        with open('job/messages.json', 'r') as f:
+        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'messages.json'), 'r') as f:
             messages = json.load(f)
             if messages:
                 messages = list(messages['messages'])
