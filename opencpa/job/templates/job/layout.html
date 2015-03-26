@@ -59,7 +59,10 @@
       </div>
 
       <!-- Main component for a primary marketing message or call to action -->
-      <div>{% block content %}{% endblock %}</div>
+      <div>
+	  	{% csrf_token %}
+	  	{% block content %}{% endblock %}
+	  </div>
 
 	  <footer>
 	  	<hr />

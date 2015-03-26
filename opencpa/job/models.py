@@ -97,3 +97,14 @@ class UpdateRecord(models.Model):
 	def __unicode__(self):
 		return str(self.last_update_day)
 
+class JobMessage(models.Model):
+	job = models.ForeignKey(Job)
+	message = models.CharField(max_length=100)
+	last_modified = models.DateTimeField(auto_now=True)
+	password =  models.CharField(max_length=20)
+
+	def __unicode__(self):
+		msg = self.message[:50] + '..' if len(self.message) > 50 else self.message
+		return str(self.job.id) + ' | ' + msg
+
+	

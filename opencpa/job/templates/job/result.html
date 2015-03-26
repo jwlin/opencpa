@@ -6,7 +6,7 @@
 <script>
 	var jobdata = {{ jobdata | safe }}
 	var sysdata = {{ sysdata | safe }}
-	var historydata = {{ historydata | safe }}
+	var historydata = {{historydata | safe }}
 	var placedata = {{ placedata | safe }}
 </script>
 {% endblock%}
@@ -61,8 +61,13 @@
 	  <li class="list-group-item"><a href="./{{message.jobid}}" target="_blank">{{message.jobname}}</a><br>{{message.content}}</li>
 	  {% endfor %}
 	{% else %}
-	  <li class="list-group-item">暫無留言</li>
+	  <li class="list-group-item">無</li>
 	{% endif %}
+  </ul>
+  <ul class="list-group">
+	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">豆知識</li>
+	  <li class="list-group-item">本日最高職缺：10-12 職等<br><a href="#" target="_blank">資訊處理/科技部/處長</a><br><a href="#" target="_blank">資訊處理/科技部/處長</a></li>
+	  <li class="list-group-item">各類科開缺趨勢</li>
   </ul>
 </div>
 

@@ -56,7 +56,16 @@ $(function () { // document ready
 		his_date.push(dates["date_from"].replace(/-/g,"/") + " - " + dates["date_to"].replace(/-/g,"/"));
 	});
 	detail += his_date.join("、");
-	detail += "</dd></dl>";
+	detail += "</dd>";
+
+	detail += "<dt>留言</dt><dd><div id='message-post-" + jobdata["job"] + "'>"
+		+ "<p><textarea rows='2' class='form-control' maxlength='200' id='comment-" + jobdata["job"] + "'></textarea></p>"
+		+ "<form class='form-inline' style='text-align:right;'><div class='form-group'><label>密碼</label>&nbsp;"
+		+ "<a data-original-title='之後刪除留言時使用' href='#' data-toggle='tooltip' title=''>(?)</a>&nbsp;"
+		+ "<input class='form-control' id='pwd-" + jobdata["job"] + "' type='password'></div>&nbsp;"
+		+ "<input class='btn btn-default btn-comment' id='btn-comment-" + jobdata["job"] + "' value='送出' type='submit'></div>";
+	detail += "<div id='message-get-" + jobdata["job"] + "'></div></dd>";
+	detail += "</dl>";
 
 	// draw the panel
 	var panel = "<div class='panel panel-primary'><div class='panel-heading'><h3 class='panel-title'>";
@@ -92,4 +101,26 @@ $(function () { // document ready
 		+ "<div class='panel-body'>" + detail + "</div></div>";
 
 	$("#item").append(panel);
+	
+	$.post("./api/message/" + jobdata['job'], {"csrfmiddlewaretoken": $('input[name="csrfmiddlewaretoken"]').val(), "action": "get",}, function(data) {
+		if (data.succeeded) {
+			var m = '<hr>';
+			$.each(data['messages'], function(idx, val) {
+				m += '<p class="text-info">' + val ['msg'] 
+					+ '<br><span style="color:grey;">' + val["time"] + '</span>&nbsp;&nbsp;'
+					+ '<a href="#" style="color:grey;" class="msg-delete" id="msg-' + val['id'] + '">刪除</a>'
+					+ '</p>';
+				});
+				$("#message-get-" + jobdata['job']).html(m);
+		}
+		else {
+			$("#message-get-" + jobid).html("[Exception]");
+		}
+	}, "json");
+
+
+	$('[data-toggle="tooltip"]').tooltip();
+	$('[data-toggle="tooltip"]').click(function( event ) {
+		event.preventDefault();
+	});
 });

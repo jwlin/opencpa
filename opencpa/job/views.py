@@ -6,10 +6,9 @@ from datetime import datetime, timedelta, date
 from django.db.models import Count
 from django.forms.models import model_to_dict
 from django.core import serializers
+from django.utils.html import escape
+from django.contrib.auth.hashers import make_password, check_password
 from .models import *
-import os
-import urllib2
-import re
 import myutil 
 import json
 
@@ -47,10 +46,24 @@ def index(request):
         for place in places:
             placedata[place['work_place_id']] = place['work_place_name']
 
+        '''
         with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'messages.json'), 'r') as f:
             messages = json.load(f)
             if messages:
                 messages = list(messages['messages'])
+        '''
+        messages = []
+        jmsgs = JobMessage.objects.all().order_by('-last_modified')[:5]
+        for jmsg in jmsgs:
+            j = CurrentJob.objects.get(job__id=jmsg.job.id)
+            jobname = j.org_name + '/' + j.title
+            if len(jobname) > 15: 
+                jobname = jobname[:15] + '..'
+            messages.append({
+                'content': jmsg.message[:30] + '..' if len(jmsg.message) > 30 else jmsg.message,
+                'jobid': jmsg.job.id,
+                'jobname': jobname,
+            })
 
         return render(
             request,
@@ -108,4 +121,37 @@ def item(request, job_id):
         'isExpired': isExpired,
         'title':'單筆職缺資料', 
     })
-        
+
+
+def message(request, job_id):
+    if request.is_ajax() and request.method == 'POST':
+        if request.POST.get('action') == 'get':
+            msgdata = []
+            try:
+                jmsgs = JobMessage.objects.filter(job__id=job_id).order_by('-last_modified')
+                for jmsg in jmsgs:
+                    msgdata.append({
+                        'msg': jmsg.message,
+                        'time': (jmsg.last_modified + timedelta(hours=8)).strftime('%Y/%m/%d %H:%M'),  # Taipei's timezone
+                        'id': jmsg.id,
+                    })
+                return HttpResponse(json.dumps({'succeeded': True, 'messages': msgdata}), content_type='application/json')
+            except:
+                return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')
+        elif request.POST.get('action') == 'add':
+            pwd = request.POST.get('pwd')
+            comment = request.POST.get('comment')
+            if pwd and comment:
+                comment = escape(comment)
+                pwd = make_password(pwd)
+                jmsg = JobMessage(job=Job.objects.get(id=job_id), message=comment, password=pwd)
+                jmsg.save()
+                return HttpResponse(json.dumps({'succeeded': True}), content_type='application/json')
+            else:
+                return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')            
+        elif request.POST.get('action') == 'modify':
+            return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')
+        else:
+            return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')
+    else:
+        raise Http404()
