@@ -53,7 +53,8 @@ def index(request):
                 messages = list(messages['messages'])
         '''
         messages = []
-        jmsgs = JobMessage.objects.all().order_by('-last_modified')[:5]
+        curJobIds = CurrentJob.objects.all().values('job_id')
+        jmsgs = JobMessage.objects.all().filter(job__id__in=curJobIds).order_by('-last_modified')[:5]
         for jmsg in jmsgs:
             j = CurrentJob.objects.get(job__id=jmsg.job.id)
             jobname = j.org_name + '/' + j.title
@@ -142,15 +143,27 @@ def message(request, job_id):
             pwd = request.POST.get('pwd')
             comment = request.POST.get('comment')
             if pwd and comment:
+                comment = comment[:200] if len(comment) > 200 else comment
                 comment = escape(comment)
+                pwd = pwd[:20] if len(comment) > 20 else pwd
                 pwd = make_password(pwd)
                 jmsg = JobMessage(job=Job.objects.get(id=job_id), message=comment, password=pwd)
                 jmsg.save()
                 return HttpResponse(json.dumps({'succeeded': True}), content_type='application/json')
             else:
                 return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')            
-        elif request.POST.get('action') == 'modify':
-            return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')
+        elif request.POST.get('action') == 'delete':
+            msgid = request.POST.get('msgid')
+            pwd = request.POST.get('pwd')
+            try:
+                jmsg = JobMessage.objects.get(id=msgid, job__id=job_id)
+                if check_password(pwd, jmsg.password):
+                    jmsg.delete()
+                    return HttpResponse(json.dumps({'succeeded': True}), content_type='application/json')
+                else:
+                    return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')
+            except:
+                return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')
         else:
             return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')
     else:

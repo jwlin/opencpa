@@ -52,7 +52,24 @@
 	<button id="sortByArea" type="button" class="btn btn-success">工作縣市</button>
 </p>
 <div class="row">
-<div class="col-md-9 list"></div>
+<div class="col-md-9">
+	<div class="list"></div>
+	<!-- msgDelModal -->
+	<div class="modal fade" id="msgDelModal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="modal-dialog"><div class="modal-content">
+		<div class="modal-body">
+			<p>
+			<span>輸入密碼以刪除留言&nbsp;
+			<input type="password" id="msgDelPwd" maxlength="20">&nbsp;
+			<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>&nbsp;
+			<button type="button" class="btn btn-primary btn-sm" id="btn-msgDelModal">刪除</button>&nbsp;
+			<span id="alertDelPwd" style="color: red">密碼錯誤</span>
+			<input type="hidden" id="hidden-msgDelModal" value="">
+			</span>
+			</p>
+		</div>
+	</div></div></div>
+</div>
 <div class="col-md-3">
   <ul class="list-group">
 	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">最新留言</li>
@@ -65,9 +82,13 @@
 	{% endif %}
   </ul>
   <ul class="list-group">
-	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">豆知識</li>
-	  <li class="list-group-item">本日最高職缺：10-12 職等<br><a href="#" target="_blank">資訊處理/科技部/處長</a><br><a href="#" target="_blank">資訊處理/科技部/處長</a></li>
-	  <li class="list-group-item">各類科開缺趨勢</li>
+	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">本日最高職等職缺</li>
+	<li class="list-group-item"><a href="#" target="_blank">10-12 職等 / 資訊處理 / 科技部 / 處長</a></li>
+	<li class="list-group-item"><a href="#" target="_blank">10-12 職等 / 資訊處理 / 金融監督管理委員會檢查局 / 設計師</a></li>
+  </ul>
+  <ul class="list-group">
+	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">本日新增職缺數</li>
+	<li class="list-group-item">人事行政 5 名、土木工程 4 名 ... <br><a href="#" target="_blank">各類科開缺趨勢</a></li>
   </ul>
 </div>
 

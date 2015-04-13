@@ -99,7 +99,7 @@ class UpdateRecord(models.Model):
 
 class JobMessage(models.Model):
 	job = models.ForeignKey(Job)
-	message = models.CharField(max_length=100)
+	message = models.CharField(max_length=200)
 	last_modified = models.DateTimeField(auto_now=True)
 	password =  models.CharField(max_length=20)
 

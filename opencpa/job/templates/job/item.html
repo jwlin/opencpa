@@ -22,7 +22,22 @@
 
 
 {% block content %}
-<div id="item"></div>
+	<div id="item"></div>
+	<!-- msgDelModal -->
+	<div class="modal fade" id="msgDelModal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="modal-dialog"><div class="modal-content">
+		<div class="modal-body">
+			<p>
+			<span>輸入密碼以刪除留言&nbsp;
+			<input type="password" id="msgDelPwd" maxlength="20">&nbsp;
+			<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>&nbsp;
+			<button type="button" class="btn btn-primary btn-sm" id="btn-msgDelModal">刪除</button>&nbsp;
+			<span id="alertDelPwd" style="color: red">密碼錯誤</span>
+			<input type="hidden" id="hidden-msgDelModal" value="">
+			</span>
+			</p>
+		</div>
+	</div></div></div>
 {% endblock %}
 
 {% block scripts %}

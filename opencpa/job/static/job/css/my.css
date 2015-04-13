@@ -24,7 +24,8 @@ div.about { display: none;}
 
 h2 {text-align:center;}
 
-.reminder {font-size: small; color:yellow;}
+span.newjob {background: gold; color: black;}
+span.expiringjob {background: #d9534f;}
 
 div.header a:link { color: #285e8e;}
 div.header a:visited { color: #285e8e;}

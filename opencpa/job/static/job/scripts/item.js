@@ -1,4 +1,7 @@
 $(function () { // document ready
+	csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+	var path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf( "/" ) + 1);
+	path = path + "api/message/" + jobdata["job"];
 
 	if (isExpired) {
 		$('ul.navbar-nav li a').attr("href",  "./"+jobdata['id']);
@@ -59,11 +62,11 @@ $(function () { // document ready
 	detail += "</dd>";
 
 	detail += "<dt>留言</dt><dd><div id='message-post-" + jobdata["job"] + "'>"
-		+ "<p><textarea rows='2' class='form-control' maxlength='200' id='comment-" + jobdata["job"] + "'></textarea></p>"
-		+ "<form class='form-inline' style='text-align:right;'><div class='form-group'><label>密碼</label>&nbsp;"
-		+ "<a data-original-title='之後刪除留言時使用' href='#' data-toggle='tooltip' title=''>(?)</a>&nbsp;"
-		+ "<input class='form-control' id='pwd-" + jobdata["job"] + "' type='password'></div>&nbsp;"
-		+ "<input class='btn btn-default btn-comment' id='btn-comment-" + jobdata["job"] + "' value='送出' type='submit'></div>";
+		+ "<form><div class='form-group'><textarea id='comment-" + jobdata["job"] 
+		+ "' maxlength='200' class='form-control' rows='2'></textarea></div>"
+		+ "<div class='form-group form-inline' style='text-align:right;'><span>密碼 (刪除留言時使用)</span>&nbsp;"
+		+ "<input type='password' maxlength='20' class='form-control' id='pwd-" + jobdata["job"] +"'>&nbsp;"
+		+ "<input type='submit' value='送出' autocomplete='off' data-loading-text='...' id='btn-comment-" + jobdata["job"] + "' class='btn btn-default btn-sm btn-comment'></div></form></div>";
 	detail += "<div id='message-get-" + jobdata["job"] + "'></div></dd>";
 	detail += "</dl>";
 
@@ -102,25 +105,96 @@ $(function () { // document ready
 
 	$("#item").append(panel);
 	
-	$.post("./api/message/" + jobdata['job'], {"csrfmiddlewaretoken": $('input[name="csrfmiddlewaretoken"]').val(), "action": "get",}, function(data) {
+	getMessages(jobdata["job"], csrfmiddlewaretoken);
+
+	// action for post comments
+	$("input.btn-comment" ).click(function( event ) {
+		event.preventDefault();
+		var jobid = $(this).attr('id');
+		jobid = jobid.split('-')[2];
+		if( !$("#comment-" + jobid).val() ) {
+			$("#comment-" + jobid).parent().addClass('has-error');
+		}
+		else if( !$("#pwd-" + jobid).val() ) {
+			$("#pwd-" + jobid).parent().addClass('has-error');
+		}
+		else {
+			var $btn = $(this).button('loading');
+			$("#comment-" + jobid).parent().removeClass('has-error');
+			$("#pwd-" + jobid).parent().removeClass('has-error');
+			$.post(path, {
+				"csrfmiddlewaretoken": csrfmiddlewaretoken, 
+				"action": "add", 
+				"pwd": $("#pwd-" + jobid).val(),
+				"comment": $("#comment-" + jobid).val(),
+			}, function(data) {
+				if (data.succeeded) {
+					getMessages(jobid, csrfmiddlewaretoken);
+					$btn.button('reset')
+					$("#pwd-" + jobid).val("");
+					$("#comment-" + jobid).val("");
+				}
+				else {
+					$("#btn-comment-" + jobid).val("Exception");
+					$("#btn-comment-" + jobid).attr("disabled", "disabled");
+				}
+			}, "json");
+		}
+	});
+
+	$('#msgDelModal').on('show.bs.modal', function (event) {
+		$('#hidden-msgDelModal').val($(event.relatedTarget).data('whatever'));
+		$('#msgDelPwd').val('');
+		$('#alertDelPwd').hide();
+		$('#msgDelPwd').focus(); // why not working?
+	})
+	
+	$("#btn-msgDelModal").click(function( event ) {
+		event.preventDefault();
+		var jobid = $("#hidden-msgDelModal").val().split('-')[0];
+		var msgid = $("#hidden-msgDelModal").val().split('-')[1];
+		var pwd = $('#msgDelPwd').val();
+		
+		$.post(path, {
+			"csrfmiddlewaretoken": csrfmiddlewaretoken,
+			"action": "delete",
+			"pwd": pwd,
+			"msgid": msgid,
+			}, function(data) {
+				if (data.succeeded) {
+					$('#msgDelModal').modal('hide');
+					getMessages(jobid, csrfmiddlewaretoken);
+					//$("#msg-" + msgid).fadeOut(500, function() { $(this).remove(); });
+				}
+				else {
+					$('#alertDelPwd').fadeOut().fadeIn();
+				}
+			}, 
+		"json");
+	});
+	
+});
+
+
+function getMessages(jobid, csrfmiddlewaretoken) {
+	var m = "";
+	var path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf( "/" ) + 1);
+	path = path + "api/message/" + jobid;
+	$.post(path, {"csrfmiddlewaretoken": csrfmiddlewaretoken, "action": "get",}, function(data) {
 		if (data.succeeded) {
-			var m = '<hr>';
-			$.each(data['messages'], function(idx, val) {
-				m += '<p class="text-info">' + val ['msg'] 
-					+ '<br><span style="color:grey;">' + val["time"] + '</span>&nbsp;&nbsp;'
-					+ '<a href="#" style="color:grey;" class="msg-delete" id="msg-' + val['id'] + '">刪除</a>'
-					+ '</p>';
+			if (data['messages'].length != 0) {
+				m = '<hr>';
+				$.each(data['messages'], function(idx, val) {
+					m += '<p class="text-info" id="msg-' + val['id'] + '">' + val ['msg'] 
+						+ '<br><span style="color:grey;">' + val["time"] + '</span>&nbsp;&nbsp;'
+						+ '<a href="#" style="color:grey;" data-toggle="modal" data-target="#msgDelModal" data-whatever="' + jobid + '-' + val['id'] + '">刪除</a>'
+						+ '</p>';
 				});
-				$("#message-get-" + jobdata['job']).html(m);
+			}
+			$("#message-get-" + jobid).fadeOut(100).fadeIn().html(m);
 		}
 		else {
 			$("#message-get-" + jobid).html("[Exception]");
 		}
 	}, "json");
-
-
-	$('[data-toggle="tooltip"]').tooltip();
-	$('[data-toggle="tooltip"]').click(function( event ) {
-		event.preventDefault();
-	});
-});
+}

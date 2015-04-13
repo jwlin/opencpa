@@ -70,7 +70,7 @@ if twDate != ur.last_update_day: # data is old, update them
         c_job.url = xml_job['url']
         c_job.view_url = xml_job['view_url']
                 
-        if ( c_job.date_to <= (twDate + timedelta(days=3)) ):
+        if ( c_job.date_to <= (twDate + timedelta(days=2)) ):
             c_job.isExpiring = True
         else:
           c_job.isExpiring = False

@@ -2,10 +2,11 @@ var areas = ["all",[10, 23], [30, 31, 32, 33, 35], [42, 50, 54], [60, 61, 63, 72
 var areaIndex = [0];
 var criterion = "RANK";
 var sysnam = ["資訊處理"];
+var csrfmiddlewaretoken="";
 
 $(function () { // document ready
 
-	var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+	csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
 
 	for(var i=0; i<sysdata[0].length; i++) {
 		$('#sys_admin').append('<li><a href="#">' + sysdata[0][i]  + '</a></li>');
@@ -97,66 +98,55 @@ $(function () { // document ready
 		event.stopPropagation(); // keep the dropdown menu open
 		display();
 	});
-	
-	$("div.panel-heading" ).click(function( event ) {
-		event.preventDefault();
-		var jobid = $(this).attr('id');
-		jobid = jobid.split('-')[1];
-		$("#pbody-" + jobid).toggle(200);
-		if ($("#pbody-" + jobid).css("display") == "block") {
-			getMessages(jobid, csrfmiddlewaretoken);
-		}
-	});
 
-	$("input.btn-comment" ).click(function( event ) {
+	$('#msgDelModal').on('show.bs.modal', function (event) {
+		$('#hidden-msgDelModal').val($(event.relatedTarget).data('whatever'));
+		$('#msgDelPwd').val('');
+		$('#alertDelPwd').hide();
+		$('#msgDelPwd').focus(); // why not working?
+	})
+				
+	$("#btn-msgDelModal").click(function( event ) {
 		event.preventDefault();
-		var jobid = $(this).attr('id');
-		jobid = jobid.split('-')[2];
-		if( !$("#comment-" + jobid).val() ) {
-			$("#comment-" + jobid).parent().addClass('has-error');
-		}
-		else if( !$("#pwd-" + jobid).val() ) {
-			$("#pwd-" + jobid).parent().addClass('has-error');
-		}
-		else {
-			var $btn = $(this).button('loading');
-			$("#comment-" + jobid).parent().removeClass('has-error');
-			$("#pwd-" + jobid).parent().removeClass('has-error');
-			$.post(window.location.pathname + "api/message/" + jobid, {
-				"csrfmiddlewaretoken": csrfmiddlewaretoken, 
-				"action": "add", 
-				"pwd": $("#pwd-" + jobid).val(),
-				"comment": $("#comment-" + jobid).val(),
+		var jobid = $("#hidden-msgDelModal").val().split('-')[0];
+		var msgid = $("#hidden-msgDelModal").val().split('-')[1];
+		var pwd = $('#msgDelPwd').val();
+		
+		$.post(window.location.pathname + "api/message/" + jobid, {
+			"csrfmiddlewaretoken": csrfmiddlewaretoken,
+			"action": "delete",
+			"pwd": pwd,
+			"msgid": msgid,
 			}, function(data) {
 				if (data.succeeded) {
+					$('#msgDelModal').modal('hide');
+					//$("#msg-" + msgid).fadeOut(500, function() { $(this).remove(); });
 					getMessages(jobid, csrfmiddlewaretoken);
-					$btn.button('reset')
-					$("#pwd-" + jobid).val("");
-					$("#comment-" + jobid).val("");
 				}
 				else {
-					$("#btn-comment-" + jobid).val("Exception");
-					$("#btn-comment-" + jobid).attr("disabled", "disabled");
+					$('#alertDelPwd').fadeOut().fadeIn();
 				}
-			}, "json");
-		}
+			}, 
+		"json");
 	});
+
 });
 
 
 function getMessages(jobid, csrfmiddlewaretoken) {
+	var m = "";
 	$.post(window.location.pathname + "api/message/" + jobid, {"csrfmiddlewaretoken": csrfmiddlewaretoken, "action": "get",}, function(data) {
 		if (data.succeeded) {
 			if (data['messages'].length != 0) {
-				var m = '<hr>';
+				m = '<hr>';
 				$.each(data['messages'], function(idx, val) {
-					m += '<p class="text-info">' + val ['msg'] 
+					m += '<p class="text-info" id="msg-' + val['id'] + '">' + val ['msg'] 
 						+ '<br><span style="color:grey;">' + val["time"] + '</span>&nbsp;&nbsp;'
-						+ '<a href="#" style="color:grey;" class="msg-delete" id="msg-' + val['id'] + '">刪除</a>'
+						+ '<a href="#" style="color:grey;" data-toggle="modal" data-target="#msgDelModal" data-whatever="' + jobid + '-' + val['id'] + '">刪除</a>'
 						+ '</p>';
 				});
-				$("#message-get-" + jobid).fadeOut(100).fadeIn().html(m);
 			}
+			$("#message-get-" + jobid).fadeOut(100).fadeIn().html(m);
 		}
 		else {
 			$("#message-get-" + jobid).html("[Exception]");
@@ -246,10 +236,10 @@ function display() {
 
 			detail += "<dt>留言</dt><dd><div id='message-post-" + jobdata[i]["fields"]["job"] + "'>"
 				+ "<form><div class='form-group'><textarea id='comment-" + jobdata[i]["fields"]["job"] 
-				+ "' maxlength='100' class='form-control' rows='2'></textarea></div>"
+				+ "' maxlength='200' class='form-control' rows='2'></textarea></div>"
 				+ "<div class='form-group form-inline' style='text-align:right;'><span>密碼 (刪除留言時使用)</span>&nbsp;"
-				+ "<input type='password' class='form-control' id='pwd-" + jobdata[i]["fields"]["job"] +"'>&nbsp;"
-				+ "<input type='submit' value='送出' autocomplete='off' data-loading-text='...' id='btn-comment-" + jobdata[i]["fields"]["job"] + "' class='btn btn-default btn-sm btn-comment'></div></form>";
+				+ "<input type='password' maxlength='20' class='form-control' id='pwd-" + jobdata[i]["fields"]["job"] +"'>&nbsp;"
+				+ "<input type='submit' value='送出' autocomplete='off' data-loading-text='...' id='btn-comment-" + jobdata[i]["fields"]["job"] + "' class='btn btn-default btn-sm btn-comment'></div></form></div>";
 			detail += "<div id='message-get-" + jobdata[i]["fields"]["job"] + "'></div></dd>";
 			detail += "</dl>";
 																							
@@ -270,8 +260,25 @@ function display() {
 				
 			panel += jobdata[i]["fields"]["org_name"] + " / "
 				+ jobdata[i]["fields"]["title"] + " / "
-				+ jobdata[i]["fields"]["num"] + "人" 
-				+ "</h3></div>"
+				+ jobdata[i]["fields"]["num"] + "人" ;
+
+			// expiring or new job
+			var today = new Date();
+			var dd = today.getDate();
+			var mm = today.getMonth()+1;
+			var yyyy = today.getFullYear();
+
+			if (dd<10) { dd = '0' + dd }
+			if (mm<10) { mm = '0' + mm }
+			today = yyyy + '-' + mm + '-' + dd;
+			if (jobdata[i]["fields"]["isExpiring"]) {
+				panel += "&nbsp;&nbsp;<span class='expiringjob'>&nbsp;expiring&nbsp;</span>";
+			}
+			else if (jobdata[i]["fields"]["date_from"] == today) {
+				panel += "&nbsp;&nbsp;<span class='newjob'>&nbsp;new&nbsp;</span>";
+			}
+			
+			panel += "</h3></div>"
 				+ "<div class='panel-body' id='pbody-" + jobdata[i]["fields"]["job"] + "'>" + detail + "</div></div>";
 
 			$("div.list").append(panel);
@@ -280,6 +287,17 @@ function display() {
 		}
 	}
 	$("div.panel-body").toggle();
+	$("div.panel-heading" ).click(function( event ) {
+		event.preventDefault();
+		var jobid = $(this).attr('id');
+		jobid = jobid.split('-')[1];
+		$("#pbody-" + jobid).toggle(200);
+		setTimeout(function(){ // wait for pbody folding/unfolding
+			if ($("#pbody-" + jobid).css("display") == "block") {
+				getMessages(jobid, csrfmiddlewaretoken);
+			}
+		}, 200);	
+	});
 	$("#count").text(count);
 
 	// display selected sysnam
@@ -302,6 +320,42 @@ function display() {
 		});
 		$("#area").text( area_text.join("、") );
 	}
+
+	// action for post comments
+	$("input.btn-comment" ).click(function( event ) {
+		event.preventDefault();
+		var jobid = $(this).attr('id');
+		jobid = jobid.split('-')[2];
+		if( !$("#comment-" + jobid).val() ) {
+			$("#comment-" + jobid).parent().addClass('has-error');
+		}
+		else if( !$("#pwd-" + jobid).val() ) {
+			$("#pwd-" + jobid).parent().addClass('has-error');
+		}
+		else {
+			var $btn = $(this).button('loading');
+			$("#comment-" + jobid).parent().removeClass('has-error');
+			$("#pwd-" + jobid).parent().removeClass('has-error');
+			$.post(window.location.pathname + "api/message/" + jobid, {
+				"csrfmiddlewaretoken": csrfmiddlewaretoken, 
+				"action": "add", 
+				"pwd": $("#pwd-" + jobid).val(),
+				"comment": $("#comment-" + jobid).val(),
+			}, function(data) {
+				if (data.succeeded) {
+					getMessages(jobid, csrfmiddlewaretoken);
+					$btn.button('reset')
+					$("#pwd-" + jobid).val("");
+					$("#comment-" + jobid).val("");
+				}
+				else {
+					$("#btn-comment-" + jobid).val("Exception");
+					$("#btn-comment-" + jobid).attr("disabled", "disabled");
+				}
+			}, "json");
+		}
+	});
+
 }
 
 function sortjobdata(criterion) {
