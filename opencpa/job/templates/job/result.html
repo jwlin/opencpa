@@ -75,7 +75,7 @@
 	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">最新留言</li>
 	{% if messages %}
 	  {% for message in messages %}
-	  <li class="list-group-item"><a href="./{{message.jobid}}" target="_blank">{{message.jobname}}</a><br>{{message.content}}</li>
+	  <li class="list-group-item"><a href="{{message.jobid}}" target="_blank">{{message.jobname}}</a><br>{{message.content}}</li>
 	  {% endfor %}
 	{% else %}
 	  <li class="list-group-item">無</li>
@@ -83,12 +83,24 @@
   </ul>
   <ul class="list-group">
 	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">本日最高職等職缺</li>
-	<li class="list-group-item"><a href="#" target="_blank">10-12 職等 / 資訊處理 / 科技部 / 處長</a></li>
-	<li class="list-group-item"><a href="#" target="_blank">10-12 職等 / 資訊處理 / 金融監督管理委員會檢查局 / 設計師</a></li>
+	{% for toprank in topranks %}
+	<li class="list-group-item"><a href="{{toprank.job.id}}" target="_blank">{{toprank.rank_from}}-{{toprank.rank_to}} 職等 / {{toprank.sysnam}} / {{toprank.org_name}} / {{toprank.title}}</a></li>
+	{% endfor %}
   </ul>
   <ul class="list-group">
 	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">本日新增職缺數</li>
-	<li class="list-group-item">人事行政 5 名、土木工程 4 名 ... <br><a href="#" target="_blank">各類科開缺趨勢</a></li>
+	<li class="list-group-item">
+		{% if newjobs %}
+			{% for newjob in newjobs %}
+				{{newjob.sysnam}} {{newjob.num}} 名、
+			{% endfor %}
+		{% else %}
+			無
+		{% endif %}
+	</li>
+	<li class="list-group-item">
+		<a href="{% url 'job:trend' %}" target="_blank">各類科開缺趨勢</a>
+	</li>
   </ul>
 </div>
 

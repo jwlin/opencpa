@@ -57,14 +57,29 @@ def index(request):
         jmsgs = JobMessage.objects.all().filter(job__id__in=curJobIds).order_by('-last_modified')[:5]
         for jmsg in jmsgs:
             j = CurrentJob.objects.get(job__id=jmsg.job.id)
-            jobname = j.org_name + '/' + j.title
-            if len(jobname) > 15: 
-                jobname = jobname[:15] + '..'
+            jobname = j.org_name + ' / ' + j.title
+            if len(jobname) > 25: 
+                jobname = jobname[:25] + '..'
             messages.append({
-                'content': jmsg.message[:30] + '..' if len(jmsg.message) > 30 else jmsg.message,
+                'content': jmsg.message[:50] + '..' if len(jmsg.message) > 30 else jmsg.message,
                 'jobid': jmsg.job.id,
                 'jobname': jobname,
             })
+
+        # top rank jobs
+        tJobs = CurrentJob.objects.all().order_by("-rank_to")[:30]
+        toprank = 100
+        for tJob in tJobs:
+            if tJob.rank_to > 14:
+                continue
+            else:
+                toprank = tJob.rank_to
+                break
+        tJobs = CurrentJob.objects.filter(rank_to=toprank).order_by('-rank_from')
+
+        # newly added jobs
+        twDate = UpdateRecord.objects.all()[0].last_update_day
+        nJobs = JobTrend.objects.filter(date=twDate).order_by('-num')
 
         return render(
             request,
@@ -77,12 +92,22 @@ def index(request):
             'year': datetime.now().year,
             'title': '職缺列表',
             'messages': messages,
+            'topranks': tJobs,
+            'newjobs': nJobs,
         })
         
     elif request.method == 'POST':
         raise Http404()
     
 def about(request):
+    return render(
+        request, 
+        'job/about.html', {
+        'year': datetime.now().year,
+        'title':'關於', 
+    })
+
+def trend(request):
     return render(
         request, 
         'job/about.html', {

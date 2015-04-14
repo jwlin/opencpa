@@ -1,14 +1,17 @@
 $(function () { // document ready
 	csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
-	var path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf( "/" ) + 1);
-	path = path + "api/message/" + jobdata["id"];
 
 	if (isExpired) {
-		$('ul.navbar-nav li a').attr("href",  "./"+jobdata['id']);
+		jid = jobdata['id']
 	}
 	else {
-		$('ul.navbar-nav li a').attr("href",  "./"+jobdata['job']);	
+		jid = jobdata['job']
 	}
+
+	var path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf( "/" ) + 1);
+	path = path + "api/message/" + jid;
+
+	$('ul.navbar-nav li a').attr("href",  "./"+jid);	
 
 	var detail = "<dl class='dl-horizontal'>";
 	if (!isExpired) {
@@ -61,13 +64,13 @@ $(function () { // document ready
 	detail += his_date.join("、");
 	detail += "</dd>";
 
-	detail += "<dt>留言</dt><dd><div id='message-post-" + jobdata["id"] + "'>"
-		+ "<form><div class='form-group'><textarea id='comment-" + jobdata["id"] 
+	detail += "<dt>留言</dt><dd><div id='message-post-" + jid + "'>"
+		+ "<form><div class='form-group'><textarea id='comment-" + jid 
 		+ "' maxlength='200' class='form-control' rows='2'></textarea></div>"
 		+ "<div class='form-group form-inline' style='text-align:right;'><span>密碼 (刪除留言時使用)</span>&nbsp;"
-		+ "<input type='password' maxlength='20' class='form-control' id='pwd-" + jobdata["id"] +"'>&nbsp;"
-		+ "<input type='submit' value='送出' autocomplete='off' data-loading-text='...' id='btn-comment-" + jobdata["id"] + "' class='btn btn-default btn-sm btn-comment'></div></form></div>";
-	detail += "<div id='message-get-" + jobdata["id"] + "'></div></dd>";
+		+ "<input type='password' maxlength='20' class='form-control' id='pwd-" + jid +"'>&nbsp;"
+		+ "<input type='submit' value='送出' autocomplete='off' data-loading-text='...' id='btn-comment-" + jid + "' class='btn btn-default btn-sm btn-comment'></div></form></div>";
+	detail += "<div id='message-get-" + jid + "'></div></dd>";
 	detail += "</dl>";
 
 	// draw the panel
@@ -105,7 +108,7 @@ $(function () { // document ready
 
 	$("#item").append(panel);
 	
-	getMessages(jobdata["id"], csrfmiddlewaretoken);
+	getMessages(jid, csrfmiddlewaretoken);
 
 	// action for post comments
 	$("input.btn-comment" ).click(function( event ) {

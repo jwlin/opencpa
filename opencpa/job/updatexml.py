@@ -19,6 +19,7 @@ ur = UpdateRecord.objects.all()[0]
 if twDate != ur.last_update_day: # data is old, update them
     xml_jobs = myutil.getxml(xml_url)
     CurrentJob.objects.all().delete()
+    JobTrend.objects.filter(date=twDate).delete()
     for xml_job in xml_jobs:
         # filter unqualified sysnam
         sysname = xml_job['sysnam']
@@ -83,6 +84,12 @@ if twDate != ur.last_update_day: # data is old, update them
             
         c_job.history_count = JobHistory.objects.filter(job = c_job.job).count()
         c_job.save()
+
+        # accumulate job trends
+        if c_job.date_from == twDate:
+            jt, created = JobTrend.objects.get_or_create(sysnam=c_job.sysnam, date=twDate)
+            jt.num += c_job.num
+            jt.save()
 
     ur.last_update_day = twDate
     ur.save()

@@ -24,6 +24,7 @@ class Job(models.Model):
 		])
 		return statement
 
+
 class JobHistory(models.Model):
 	job = models.ForeignKey(Job)
 	date_from = models.DateField()
@@ -36,6 +37,7 @@ class JobHistory(models.Model):
 			str(self.date_to) 
 		])
 		return statement
+
 
 class CurrentJob(models.Model):
 	job = models.ForeignKey(Job)
@@ -91,11 +93,13 @@ class WorkPlace(models.Model):
 		])
 		return statement
 	
+
 class UpdateRecord(models.Model):
 	last_update_day = models.DateField()
 
 	def __unicode__(self):
 		return str(self.last_update_day)
+
 
 class JobMessage(models.Model):
 	job = models.ForeignKey(Job)
@@ -107,4 +111,16 @@ class JobMessage(models.Model):
 		msg = self.message[:50] + '..' if len(self.message) > 50 else self.message
 		return str(self.job.id) + ' | ' + msg
 
+
+class JobTrend(models.Model):
+	sysnam = models.CharField(max_length=100)
+	date = models.DateField()
+	num = models.PositiveSmallIntegerField(default=0)
 	
+	def __unicode__(self):
+		statement = ' | '.join([
+			self.sysnam, 
+			str(self.date),
+			str(self.num)
+		])
+		return statement
