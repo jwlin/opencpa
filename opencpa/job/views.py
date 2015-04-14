@@ -110,9 +110,9 @@ def about(request):
 def trend(request):
     return render(
         request, 
-        'job/about.html', {
+        'job/trend.html', {
         'year': datetime.now().year,
-        'title':'關於', 
+        'title':'各類科開缺趨勢', 
     })
 
 def item(request, job_id):

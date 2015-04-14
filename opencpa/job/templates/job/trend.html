@@ -1,0 +1,33 @@
+{% extends "job/layout.html" %}
+
+{% load staticfiles %}
+
+{% block navbar %}
+<li><a href="{% url 'job:trend' %}">各類科開缺趨勢</a></li>
+{% endblock %}
+
+{% block content %}
+<div>
+	<ul class="nav nav-pills" role="tablist">
+		<li role="presentation" class="dropdown active">
+	 	  <a id="drop5" class="dropdown-toggle" aria-expanded="false" role="button" aria-haspopup="true" data-toggle="dropdown" href="#">
+		  行政類 <span class="caret"></span></a>
+		  <ul class="dropdown-menu" role="menu" aria-labelledby="drop5">
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+		  </ul>
+		</li>
+		<li role="presentation" class="dropdown active">
+		  <a id="drop5" class="dropdown-toggle" aria-expanded="false" role="button" aria-haspopup="true" data-toggle="dropdown" href="#">
+		  技術類 <span class="caret"></span></a>
+		  <ul class="dropdown-menu" role="menu" aria-labelledby="drop5">
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+		  </ul>
+		</li>
+	</ul>	
+</div>
+<hr>
+<div></div>
+
+{% endblock%}
