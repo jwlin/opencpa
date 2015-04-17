@@ -5,6 +5,7 @@ sys.path.append(os.path.join(os.path.abspath('..')))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "opencpa.settings.production")
 
 from datetime import datetime, timedelta, date
+from django.db.models import Sum
 from job.models import *
 from job import myutil
 import re 
@@ -14,12 +15,13 @@ xml_url = 'http://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx?GETJOB=Y'
 
 # ensure data in CurrentJob is up to date
 twDate = (datetime.utcnow() + timedelta(hours=8)).date()
+yesterday = twDate + timedelta(days=-1)
 ur = UpdateRecord.objects.all()[0]
 
 if twDate != ur.last_update_day: # data is old, update them
     xml_jobs = myutil.getxml(xml_url)
     CurrentJob.objects.all().delete()
-    JobTrend.objects.filter(date=twDate).delete()
+    JobTrend.objects.filter(date=yesterday).delete()
     for xml_job in xml_jobs:
         # filter unqualified sysnam
         sysname = xml_job['sysnam']
@@ -85,12 +87,11 @@ if twDate != ur.last_update_day: # data is old, update them
         c_job.history_count = JobHistory.objects.filter(job = c_job.job).count()
         c_job.save()
 
-        # accumulate job trends
-        if c_job.date_from == twDate:
-            jt, created = JobTrend.objects.get_or_create(sysnam=c_job.sysnam, date=twDate)
-            jt.num += c_job.num
-            jt.save()
-
+    # accumulate job trends
+    yesterdayJobs = CurrentJob.objects.filter(date_from=yesterday).values('sysnam').annotate(num=Sum('num')).order_by('-num')
+    for yjob in yesterdayJobs:
+        jt = JobTrend(sysnam=yjob['sysnam'], date=yesterday, num=yjob['num'])
+        jt.save()
+    
     ur.last_update_day = twDate
     ur.save()
-        

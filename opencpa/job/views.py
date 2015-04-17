@@ -66,6 +66,7 @@ def index(request):
                 'jobname': jobname,
             })
 
+        '''
         # top rank jobs
         tJobs = CurrentJob.objects.all().order_by("-rank_to")[:30]
         toprank = 100
@@ -76,10 +77,15 @@ def index(request):
                 toprank = tJob.rank_to
                 break
         tJobs = CurrentJob.objects.filter(rank_to=toprank).order_by('-rank_from')
+        '''
 
         # newly added jobs
-        twDate = UpdateRecord.objects.all()[0].last_update_day
-        nJobs = JobTrend.objects.filter(date=twDate).order_by('-num')
+        yesterday = UpdateRecord.objects.all()[0].last_update_day + timedelta(days=-1)
+        jts = JobTrend.objects.filter(date=yesterday).order_by('-num')
+        newjobs = []
+        for jt in jts:
+            newjobs.append({'sysnam': jt.sysnam, 'num': jt.num, 'type': myutil.judge_type(jt.sysnam)})
+
 
         return render(
             request,
@@ -88,12 +94,12 @@ def index(request):
             'historydata': historydata,
             'sysdata': sysdata,
             'placedata': json.dumps(placedata),
-            'twDate': UpdateRecord.objects.all()[0].last_update_day.strftime('%Y/%m/%d'),
+            'twDate': UpdateRecord.objects.all()[0].last_update_day.strftime('%Y-%m-%d'),
             'year': datetime.now().year,
             'title': '職缺列表',
             'messages': messages,
-            'topranks': tJobs,
-            'newjobs': nJobs,
+            #'topranks': tJobs,
+            'newjobs': newjobs,
         })
         
     elif request.method == 'POST':
@@ -112,13 +118,15 @@ def trend(request):
     adminData = []
     techData = []
     for jt in jts:
-        adminData.append({'y': jt.num, 'label': jt.sysnam})
-        techData.append({'y': jt.num, 'label': jt.sysnam})
+        if myutil.judge_type(jt.sysnam) == 0:
+            adminData.append({'y': jt.num, 'label': jt.sysnam})
+        else:  # myutil.judge_type(jt.sysnam) == 1
+            techData.append({'y': jt.num, 'label': jt.sysnam})
     return render(
         request, 
         'job/trend.html', {
         'year': datetime.now().year,
-        'title':'各類科開缺趨勢', 
+        'title':'各類科新增職缺數統計', 
         'adminData': json.dumps(adminData),
         'techData': json.dumps(techData),
     })

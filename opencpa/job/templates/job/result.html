@@ -82,26 +82,34 @@
 	{% endif %}
   </ul>
   <ul class="list-group">
-	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">本日最高職等職缺</li>
+	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">
+		昨日新增職缺數 (
+		<a href="{% url 'job:trend' %}" target="_blank" style="color: gold;">各類科統計</a>
+		)
+	</li>
+	<li class="list-group-item">
+		<h4>行政類</h4>
+		{% for newjob in newjobs %}
+			{% if newjob.type == 0 %}
+				{{newjob.sysnam}} {{newjob.num}} 名<br>
+			{% endif %}
+		{% endfor %}
+	</li>
+	<li class="list-group-item">
+		<h4>技術類</h4>
+		{% for newjob in newjobs %}
+			{% if newjob.type == 1 %}
+				{{newjob.sysnam}} {{newjob.num}} 名<br>
+			{% endif %}
+		{% endfor %}
+	</li>
+  </ul>
+  <!--<ul class="list-group">
+	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">本日最高職等職缺：{% with topranks|first as t %}{{t.rank_to}} 職等{% endwith %}</li>
 	{% for toprank in topranks %}
-	<li class="list-group-item"><a href="{{toprank.job.id}}" target="_blank">{{toprank.rank_from}}-{{toprank.rank_to}} 職等 / {{toprank.sysnam}} / {{toprank.org_name}} / {{toprank.title}}</a></li>
+	<li class="list-group-item"><a href="{{toprank.job.id}}" target="_blank">{{toprank.sysnam}} / {{toprank.org_name}} / {{toprank.title}}</a></li>
 	{% endfor %}
-  </ul>
-  <ul class="list-group">
-	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">本日新增職缺數</li>
-	<li class="list-group-item">
-		{% if newjobs %}
-			{% for newjob in newjobs %}
-				{{newjob.sysnam}} {{newjob.num}} 名、
-			{% endfor %}
-		{% else %}
-			無
-		{% endif %}
-	</li>
-	<li class="list-group-item">
-		<a href="{% url 'job:trend' %}" target="_blank">各類科開缺趨勢</a>
-	</li>
-  </ul>
+  </ul>-->
 </div>
 
 {% endblock%}
