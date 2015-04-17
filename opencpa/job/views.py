@@ -94,7 +94,7 @@ def index(request):
             'historydata': historydata,
             'sysdata': sysdata,
             'placedata': json.dumps(placedata),
-            'twDate': UpdateRecord.objects.all()[0].last_update_day.strftime('%Y-%m-%d'),
+            'twDate': UpdateRecord.objects.all()[0].last_update_day.strftime('%Y/%m/%d'),
             'year': datetime.now().year,
             'title': '職缺列表',
             'messages': messages,
@@ -196,6 +196,7 @@ def message(request, job_id):
         elif request.POST.get('action') == 'delete':
             msgid = request.POST.get('msgid')
             pwd = request.POST.get('pwd')
+            pwd = pwd[:20] if len(comment) > 20 else pwd
             try:
                 jmsg = JobMessage.objects.get(id=msgid, job__id=job_id)
                 if check_password(pwd, jmsg.password):
