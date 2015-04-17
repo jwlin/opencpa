@@ -2,54 +2,70 @@
 
 {% load staticfiles %}
 
-{% block head-styles %}
-<style>
-.bar {fill: steelblue;}
-.bar:hover {fill: brown;}
-.axis {font: 12px sans-serif;}
-.axis path, .axis line {
-	fill: none;
-	stroke: #000;
-	shape-rendering: crispEdges;
-}
-.x.axis path {display: none;}
-</style>
-{% endblock %}
-
-
 {% block head-scripts %}
-<script>
-	var admindata = [{"sysnam": "ABC", "num": "123"}, {"sysnam": "BC", "num": "23"}, {"sysnam": "AC", "num": "12"},];
-	var techdata = [{"sysnam": "ABC", "num": "123"}, {"sysnam": "BC", "num": "23"}, {"sysnam": "AC", "num": "12"},];
+<script type="text/javascript">
+	window.onload = function () {
+		var adminData = {{adminData|safe}} 
+		var adminChart = new CanvasJS.Chart("adminChart", {
+			animationEnabled: true,
+			axisX:{
+				interval: 1,
+				gridThickness: 0,
+				labelFontSize: 12,
+				labelFontStyle: "normal",
+				labelFontWeight: "normal",
+				labelFontFamily: "Lucida Sans Unicode"
+			},
+			data: [{
+				type: "bar",
+				name: "sysname",
+				axisYType: "secondary",
+				color: "steelblue",
+				dataPoints: adminData, 
+			}]
+		});
+		adminChart.render();
+
+		var techData = {{techData|safe}} 
+		var techChart = new CanvasJS.Chart("techChart", {
+			animationEnabled: true,
+			axisX:{
+				interval: 1,
+				gridThickness: 0,
+				labelFontSize: 12,
+				labelFontStyle: "normal",
+				labelFontWeight: "normal",
+				labelFontFamily: "Lucida Sans Unicode"
+			},
+			data: [{
+				type: "bar",
+				name: "sysname",
+				axisYType: "secondary",
+				color: "steelblue",
+				dataPoints: techData
+			}]
+		});
+		techChart.render();
+	}
 </script>
+<script src="{% static 'job/scripts/canvasjs.min.js' %}"></script>
+
 {% endblock %}
 
 {% block navbar %}
 <li><a href="{% url 'job:trend' %}">各類科開缺趨勢</a></li>
 {% endblock %}
 
-{% block content %}
-<div id="admin-drop"class="dropdown clearfix">
-	<p>自 2015-01-01{{start_date}} 起</p>
-	<!--，最近
-	<button aria-expanded="false" data-toggle="dropdown" id="adminMenu" type="button" class="btn btn-success dropdown-toggle">
-	<span class="caret"></span>
-	</button>
-	<ul aria-labelledby="adminMenu" role="menu" class="dropdown-menu">
-		<li role="presentation"><a href="#" tabindex="-1" role="menuitem">三個月</a></li>
-		<li role="presentation"><a href="#" tabindex="-1" role="menuitem">半年</a></li>
-		<li role="presentation"><a href="#" tabindex="-1" role="menuitem">一年</a></li>
-		<li role="presentation"><a href="#" tabindex="-1" role="menuitem">三年</a></li>
-	</ul>-->
-</div>
-<h4>行政類</h4>
-<div id="admin-chart"></div>
-<hr>
-<h4>技術類</h4>
-<div id="tech-chart"></div>
+{% block navbar-right %}
 {% endblock%}
 
-{% block scripts %}
-<script src="{% static 'job/scripts/d3.v3.min.js' %}"></script>
-<script src="{% static 'job/scripts/trend.js' %}"></script>
+{% block content %}
+<h4>行政類</h4>
+<div id="adminChart" style="height: 300px; width: 100%;"></div>
+<hr>
+<h4>技術類</h4>
+<div id="techChart" style="height: 300px; width: 100%;"></div>
+<p style="text-align: right;">資料累計起始日期：{{start_date | default:"2015-04-15"}}</p>
+
 {% endblock%}
+

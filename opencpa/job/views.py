@@ -108,11 +108,19 @@ def about(request):
     })
 
 def trend(request):
+    jts = JobTrend.objects.all().order_by('num')
+    adminData = []
+    techData = []
+    for jt in jts:
+        adminData.append({'y': jt.num, 'label': jt.sysnam})
+        techData.append({'y': jt.num, 'label': jt.sysnam})
     return render(
         request, 
         'job/trend.html', {
         'year': datetime.now().year,
         'title':'各類科開缺趨勢', 
+        'adminData': json.dumps(adminData),
+        'techData': json.dumps(techData),
     })
 
 def item(request, job_id):
