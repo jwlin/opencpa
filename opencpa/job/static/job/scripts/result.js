@@ -269,10 +269,10 @@ function display() {
 			var yesterday = new Date(tdate);
 			yesterday = yesterday.toISOString().split("T")[0];
 			if (jobdata[i]["fields"]["isExpiring"]) {
-				panel += "&nbsp;&nbsp;<span class='expiringjob'>&nbsp;expiring&nbsp;</span>";
+				panel += "&nbsp;&nbsp;<span class='expiringjob'>&nbsp;Expiring&nbsp;</span>";
 			}
 			else if ((jobdata[i]["fields"]["date_from"] == today) || (jobdata[i]["fields"]["date_from"] == yesterday)) {
-				panel += "&nbsp;&nbsp;<span class='newjob'>&nbsp;new&nbsp;</span>";
+				panel += "&nbsp;&nbsp;<span class='newjob'>&nbsp;New&nbsp;</span>";
 			}
 			
 			panel += "</h3></div>"

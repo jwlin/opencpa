@@ -126,7 +126,7 @@ def trend(request):
         request, 
         'job/trend.html', {
         'year': datetime.now().year,
-        'title':'各類科新增職缺數統計', 
+        'title':'各類科職缺數統計', 
         'adminData': json.dumps(adminData),
         'techData': json.dumps(techData),
     })
