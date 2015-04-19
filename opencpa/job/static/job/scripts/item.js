@@ -52,7 +52,9 @@ $(function () { // document ready
 		detail += "<dt>資格條件</dt>"
 			+ "<dd>" + jobdata["work_quality"] + "</dd>"
 			+ "<dt>工作項目</dt>"
-			+ "<dd>" + jobdata["work_item"] + "</dd>";
+			+ "<dd>" + jobdata["work_item"] + "</dd>"
+			+ "<dt>工作地址</dt>"
+			+ "<dd>" + jobdata["work_addr"] + "</dd>";
 	}
 
 	// check history count and info

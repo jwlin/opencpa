@@ -2,13 +2,15 @@
 
 import os, sys
 sys.path.append(os.path.join(os.path.abspath('..')))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "opencpa.settings.production")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "opencpa.settings.local")
 
 from datetime import datetime, timedelta, date
 from django.db.models import Sum
 from job.models import *
 from job import myutil
 import re 
+import django
+django.setup()
 
 #xml_url = 'https://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx'
 xml_url = 'http://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx?GETJOB=Y'
@@ -37,6 +39,7 @@ if twDate != ur.last_update_day: # data is old, update them
         c_job.rank_to = int(xml_job['rank']['to'])
         c_job.work_quality = xml_job['work_quality']
         c_job.work_item = xml_job['work_item']
+        c_job.work_addr = xml_job['work_addr']
         
         # get the unique job_id of this job
         c_job.job, created = Job.objects.get_or_create(
@@ -47,7 +50,8 @@ if twDate != ur.last_update_day: # data is old, update them
             rank_from = c_job.rank_from,
             rank_to = c_job.rank_to,
             work_quality = c_job.work_quality,
-            work_item = c_job.work_item
+            work_item = c_job.work_item,
+            work_addr = c_job.work_addr
         )
         
         searchObj = re.search( r'(\d+)', xml_job['num'], re.M|re.I)
@@ -67,8 +71,6 @@ if twDate != ur.last_update_day: # data is old, update them
         c_job.job_type = xml_job['type']
         c_job.email = xml_job['email']
         c_job.work_quality = xml_job['work_quality']
-        #c_job.work_item = xml_job['work_item']
-        c_job.work_addr = xml_job['work_addr']
         c_job.contact = xml_job['contact']
         c_job.url = xml_job['url']
         c_job.view_url = xml_job['view_url']

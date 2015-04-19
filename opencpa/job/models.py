@@ -11,6 +11,7 @@ class Job(models.Model):
 	rank_to = models.PositiveSmallIntegerField()
 	work_quality = models.CharField(max_length=3000)
 	work_item =  models.CharField(max_length=1000, null=True)
+	work_addr = models.CharField(max_length=200, null=True)
 
 	def __unicode__(self):
 		statement = ' | '.join([

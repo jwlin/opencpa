@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from datetime import datetime, timedelta, date
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.forms.models import model_to_dict
 from django.core import serializers
 from django.utils.html import escape
@@ -114,14 +114,15 @@ def about(request):
     })
 
 def trend(request):
-    jts = JobTrend.objects.all().order_by('num')
+    #jts = JobTrend.objects.all().order_by('num')
+    jts = JobTrend.objects.all().values('sysnam').annotate(num=Sum('num')).order_by('num')
     adminData = []
     techData = []
     for jt in jts:
-        if myutil.judge_type(jt.sysnam) == 0:
-            adminData.append({'y': jt.num, 'label': jt.sysnam})
+        if myutil.judge_type(jt['sysnam']) == 0:
+            adminData.append({'y': jt['num'], 'label': jt['sysnam']})
         else:  # myutil.judge_type(jt.sysnam) == 1
-            techData.append({'y': jt.num, 'label': jt.sysnam})
+            techData.append({'y': jt['num'], 'label': jt['sysnam']})
     return render(
         request, 
         'job/trend.html', {
