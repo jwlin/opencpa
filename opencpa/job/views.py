@@ -187,7 +187,7 @@ def message(request, job_id):
             if pwd and comment:
                 comment = comment[:200] if len(comment) > 200 else comment
                 comment = escape(comment)
-                pwd = pwd[:20] if len(comment) > 20 else pwd
+                pwd = pwd[:20] if len(pwd) > 20 else pwd
                 pwd = make_password(pwd)
                 jmsg = JobMessage(job=Job.objects.get(id=job_id), message=comment, password=pwd)
                 jmsg.save()
@@ -197,7 +197,7 @@ def message(request, job_id):
         elif request.POST.get('action') == 'delete':
             msgid = request.POST.get('msgid')
             pwd = request.POST.get('pwd')
-            pwd = pwd[:20] if len(comment) > 20 else pwd
+            pwd = pwd[:20] if len(pwd) > 20 else pwd
             try:
                 jmsg = JobMessage.objects.get(id=msgid, job__id=job_id)
                 if check_password(pwd, jmsg.password):
