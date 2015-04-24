@@ -81,10 +81,10 @@ def index(request):
 
         # newly added jobs
         yesterday = UpdateRecord.objects.all()[0].last_update_day + timedelta(days=-1)
-        jts = JobTrend.objects.filter(date=yesterday).order_by('-num')
+        jts = JobTrend.objects.filter(date=yesterday).values('sysnam').annotate(num=Sum('num')).order_by('-num')
         newjobs = []
         for jt in jts:
-            newjobs.append({'sysnam': jt.sysnam, 'num': jt.num, 'type': myutil.judge_type(jt.sysnam)})
+            newjobs.append({'sysnam': jt['sysnam'], 'num': jt['num'], 'type': myutil.judge_type(jt['sysnam'])})
 
 
         return render(
@@ -127,7 +127,7 @@ def trend(request):
         request, 
         'job/trend.html', {
         'year': datetime.now().year,
-        'title':'各類科職缺數統計', 
+        'title':'各類科新增職缺數統計', 
         'adminData': json.dumps(adminData),
         'techData': json.dumps(techData),
     })

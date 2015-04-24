@@ -90,10 +90,13 @@ if twDate != ur.last_update_day: # data is old, update them
         c_job.save()
 
     # accumulate job trends
-    yesterdayJobs = CurrentJob.objects.filter(date_from=yesterday).values('sysnam').annotate(num=Sum('num')).order_by('-num')
-    for yjob in yesterdayJobs:
-        jt = JobTrend(sysnam=yjob['sysnam'], date=yesterday, num=yjob['num'])
-        jt.save()
+    level = [3, 2, 1]
+    level_rank = [0, 6, 10, 14]
+    for i in xrange(3):
+        yesterdayJobs = CurrentJob.objects.filter(date_from=yesterday, rank_to__gte=level_rank[i], rank_to__lt=level_rank[i+1]).values('sysnam').annotate(num=Sum('num')).order_by('-num')
+        for yjob in yesterdayJobs:
+            jt = JobTrend(sysnam=yjob['sysnam'], date=yesterday, num=yjob['num'], level=level[i])
+            jt.save()
     
     ur.last_update_day = twDate
     ur.save()

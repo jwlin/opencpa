@@ -53,7 +53,7 @@
 {% endblock %}
 
 {% block navbar %}
-<li><a href="{% url 'job:trend' %}">{{title}} (資料統計起始日期：{{start_date | default:"2015/04/17"}})</a></li>
+<li><a href="{% url 'job:trend' %}">{{title}} (統計起始日期：{{start_date | default:"2015/04/17"}})</a></li>
 {% endblock %}
 
 {% block navbar-right %}
@@ -61,10 +61,10 @@
 
 {% block content %}
 <h4>行政類</h4>
-<div id="adminChart" style="height: 300px; width: 100%;"></div>
+<div id="adminChart" style="height: 500px; width: 100%;"></div>
 <hr>
 <h4>技術類</h4>
-<div id="techChart" style="height: 300px; width: 100%;"></div>
+<div id="techChart" style="height: 500px; width: 100%;"></div>
 
 {% endblock%}
 

@@ -1,3 +1,4 @@
+# vim: set ts=4 sw=4 et: -*- coding: utf-8 -*-
 from django.db import models
 
 class Job(models.Model):
@@ -114,14 +115,24 @@ class JobMessage(models.Model):
 
 
 class JobTrend(models.Model):
-	sysnam = models.CharField(max_length=100)
-	date = models.DateField()
-	num = models.PositiveSmallIntegerField(default=0)
+    sysnam = models.CharField(max_length=100)
+    date = models.DateField()
+    num = models.PositiveSmallIntegerField(default=0)
+    HIGH = 1
+    MIDDLE = 2
+    LOW = 3
+    LEVEL_CHOICES = (
+        (HIGH, u'簡任'),
+        (MIDDLE, u'薦任'),
+        (LOW, u'委任')
+    )
+    level = models.PositiveSmallIntegerField(choices=LEVEL_CHOICES, default=LOW)
 	
-	def __unicode__(self):
-		statement = ' | '.join([
-			self.sysnam, 
-			str(self.date),
-			str(self.num)
-		])
-		return statement
+    def __unicode__(self):
+        statement = ' | '.join([
+            self.sysnam, 
+            str(self.date),
+            str(self.num),
+            str(self.level)
+        ])
+        return statement
