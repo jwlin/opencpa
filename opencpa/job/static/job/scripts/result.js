@@ -293,7 +293,7 @@ function display() {
 			if ($("#pbody-" + jobid).css("display") == "block") {
 				getMessages(jobid, csrfmiddlewaretoken);
 			}
-		}, 200);	
+		}, 250);	
 	});
 	$("#count").text(count);
 
