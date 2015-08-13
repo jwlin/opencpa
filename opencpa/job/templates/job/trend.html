@@ -48,7 +48,6 @@
 		techChart.render();
 	}
 </script>
-<script src="{% static 'job/scripts/canvasjs.min.js' %}"></script>
 
 {% endblock %}
 
@@ -67,4 +66,8 @@
 <div id="techChart" style="height: 500px; width: 100%;"></div>
 
 {% endblock%}
+
+{% block scripts %}
+    <script src="{% static 'job/scripts/canvasjs.min.js' %}"></script>
+{% endblock %}
 

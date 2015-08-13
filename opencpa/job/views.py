@@ -114,22 +114,34 @@ def about(request):
     })
 
 def trend(request):
-    #jts = JobTrend.objects.all().order_by('num')
     jts = JobTrend.objects.all().values('sysnam').annotate(num=Sum('num')).order_by('num')
-    adminData = []
-    techData = []
+    trend_data = [[], []]  # 0 is for admin_data, 1 is for tech_data
     for jt in jts:
-        if myutil.judge_type(jt['sysnam']) == 0:
-            adminData.append({'y': jt['num'], 'label': jt['sysnam']})
-        else:  # myutil.judge_type(jt.sysnam) == 1
-            techData.append({'y': jt['num'], 'label': jt['sysnam']})
+        type_index = myutil.judge_type(jt['sysnam'])  # 0 is for admin_data, 1 is for tech_data
+        names = myutil.split_sysnam(jt['sysnam'])
+        for name in names:
+            found = False
+            for pair in trend_data[type_index]:
+                if pair['label'] == name:
+                    pair['y'] = int(pair['y']) + int(jt['num'])
+                    found = True
+                    break
+            if not found:
+                trend_data[type_index].append({'y': jt['num'], 'label': name})
+        for i in range(len(trend_data)):
+            trend_data[i] = sorted(trend_data[i], key=lambda k: int(k['y']))
+    '''
+    for data_list in trend_data:
+        for data in data_list:
+            print data['y'], data['label']
+    '''
     return render(
         request, 
         'job/trend.html', {
         'year': datetime.now().year,
         'title':'各類科新增職缺數統計', 
-        'adminData': json.dumps(adminData),
-        'techData': json.dumps(techData),
+        'adminData': json.dumps(trend_data[0]),
+        'techData': json.dumps(trend_data[1]),
     })
 
 def item(request, job_id):

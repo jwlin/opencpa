@@ -163,3 +163,18 @@ def filter(sysnam):
             if word in sysnam:
                 return True
     return False
+
+
+def split_sysnam(sysnam):
+    # ex. sysnam = u'具教育行政（含文化行政、新聞、博物館管理、圖書資訊管理、史料編纂）任用資格 :'
+    if sysnam[0] == u'具':
+        sysnam = sysnam[1:]
+    sysnam = re.sub(u'[（）()：: 「」]', '', sysnam)
+    discards = [u'任用資格', u'預估缺', u'秘書室', u'6204', u'技術類']
+    for discard in discards:
+        sysnam = sysnam.replace(discard, '')
+    splitters = [u'、', u'或', u'及', u'/']
+    for spliter in splitters:
+        if spliter in sysnam:
+            return sysnam.split(spliter)
+    return [sysnam]
