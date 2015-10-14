@@ -37,9 +37,9 @@ if twDate != ur.last_update_day: # data is old, update them
         c_job.person_kind = xml_job['person_kind']
         c_job.rank_from = int(xml_job['rank']['from'])
         c_job.rank_to = int(xml_job['rank']['to'])
-        c_job.work_quality = xml_job['work_quality']
+        c_job.work_quality = xml_job['work_quality'] if xml_job['work_quality'] else 'no data'
         c_job.work_item = xml_job['work_item']
-        c_job.work_addr = xml_job['work_addr']
+        c_job.work_addr = xml_job['work_addr'] if xml_job['work_addr'] else 'no data'
         
         # get the unique job_id of this job
         c_job.job, created = Job.objects.get_or_create(
@@ -70,7 +70,7 @@ if twDate != ur.last_update_day: # data is old, update them
         c_job.is_training = xml_job['is_training']
         c_job.job_type = xml_job['type']
         c_job.email = xml_job['email']
-        c_job.work_quality = xml_job['work_quality']
+        c_job.work_quality = xml_job['work_quality'] if xml_job['work_quality'] else 'no data'
         c_job.contact = xml_job['contact']
         c_job.url = xml_job['url']
         c_job.view_url = xml_job['view_url']
