@@ -20,7 +20,7 @@ twDate = (datetime.utcnow() + timedelta(hours=8)).date()
 yesterday = twDate + timedelta(days=-1)
 ur = UpdateRecord.objects.all()[0]
 
-if twDate != ur.last_update_day: # data is old, update them
+if (twDate != ur.last_update_day) or (not CurrentJob.objects.all()): # data is old or last update failed
     xml_jobs = myutil.getxml(xml_url)
     CurrentJob.objects.all().delete()
     JobTrend.objects.filter(date=yesterday).delete()
