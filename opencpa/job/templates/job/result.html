@@ -46,10 +46,14 @@
 
 
 {% block content %}
-<p class="list-sum">
+    {% if not jobdata %}
+    <h3>因本日資料處理過程中發生問題，暫時無法顯示，請直接到<a href="http://web3.dgpa.gov.tw/want03front/AP/WANTF00001.aspx">總處網站</a>查詢。造成不便敬請見諒。</h3>
+    {% else %}
+	<p class="list-sum">
 	查詢 <span id="filter-name"></span> 類科，<span id="area"></span> 共 <span id="count"></span> 筆職缺。變更排序：
 	<button id="sortByRank" type="button" class="btn btn-success">職等</button>
 	<button id="sortByArea" type="button" class="btn btn-success">工作縣市</button>
+	{% endif %}
 </p>
 <div class="row">
 <div class="col-md-9">
