@@ -30,8 +30,8 @@ def getxml(xml_path):
         resp = requests.post(xml_path, verify=False, stream=True, data=formData, headers=header)
         resp = resp.raw
     
-    #tree = ET.parse(resp)
-    tree = ET.parse('today.xml')
+    tree = ET.parse(resp)
+    #tree = ET.parse('today.xml')
     root = tree.getroot()
     unqualified_list = [] # 非公務人員
     with open(path.join(settings.BASE_DIR, 'job', 'filters', 'unqualified-list.txt')) as fp:
