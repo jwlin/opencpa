@@ -53,6 +53,10 @@ if (twDate != ur.last_update_day) or (not CurrentJob.objects.all()): # data is o
             work_item = c_job.work_item,
             work_addr = c_job.work_addr
         )
+        if created:
+            job = Job.objects.get(id=c_job.job.id)
+            job.is_resume_required = myutil.isResumeRequired(xml_job['view_url'])
+            job.save()
         
         searchObj = re.search( r'(\d+)', xml_job['num'], re.M|re.I)
         if searchObj:
@@ -74,6 +78,7 @@ if (twDate != ur.last_update_day) or (not CurrentJob.objects.all()): # data is o
         c_job.contact = xml_job['contact']
         c_job.url = xml_job['url']
         c_job.view_url = xml_job['view_url']
+        c_job.is_resume_required = c_job.job.is_resume_required
                 
         if ( c_job.date_to <= (twDate + timedelta(days=2)) ):
             c_job.isExpiring = True
@@ -81,7 +86,7 @@ if (twDate != ur.last_update_day) or (not CurrentJob.objects.all()): # data is o
           c_job.isExpiring = False
 
         job_his, created = JobHistory.objects.get_or_create(
-        job = c_job.job,
+            job = c_job.job,
             date_from = c_job.date_from,
             date_to = c_job.date_to
         )

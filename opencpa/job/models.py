@@ -13,6 +13,7 @@ class Job(models.Model):
 	work_quality = models.CharField(max_length=3000)
 	work_item =  models.CharField(max_length=1000, null=True)
 	work_addr = models.CharField(max_length=200, null=True)
+	is_resume_required = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		statement = ' | '.join([
@@ -69,6 +70,7 @@ class CurrentJob(models.Model):
 	view_url = models.CharField(max_length=200)
 	isExpiring = models.BooleanField()
 	history_count = models.PositiveSmallIntegerField()
+	is_resume_required = models.BooleanField(default=False)
 
 	
 	def __unicode__(self):

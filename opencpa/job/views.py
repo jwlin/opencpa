@@ -24,7 +24,7 @@ def index(request):
         currentjob_list = list(CurrentJob.objects.values('job_id'))
         for job in reopenjobs:
             if {'job_id': job['job_id']} in currentjob_list:
-                hisjob_dates = list(JobHistory.objects.values('date_from', 'date_to').filter(job_id=job['job_id']))
+                hisjob_dates = list(JobHistory.objects.values('date_from', 'date_to').filter(job_id=job['job_id']))[-5:]
                 hisjob_list.append([job['job_id'], hisjob_dates])
         
         dthandler = lambda obj: (
@@ -46,12 +46,6 @@ def index(request):
         for place in places:
             placedata[place['work_place_id']] = place['work_place_name']
 
-        '''
-        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'messages.json'), 'r') as f:
-            messages = json.load(f)
-            if messages:
-                messages = list(messages['messages'])
-        '''
         messages = []
         curJobIds = CurrentJob.objects.all().values('job_id')
         jmsgs = JobMessage.objects.all().filter(job__id__in=curJobIds).order_by('-last_modified')[:5]
@@ -130,6 +124,11 @@ def trend(request):
                 trend_data[type_index].append({'y': jt['num'], 'label': name})
         for i in range(len(trend_data)):
             trend_data[i] = sorted(trend_data[i], key=lambda k: int(k['y']))
+
+    table_data_list = [[],[]]
+    for i in range(len(trend_data)):
+        for pair in trend_data[i]:
+            table_data_list[i].append([pair['label'], pair['y']])
     '''
     for data_list in trend_data:
         for data in data_list:
@@ -139,9 +138,12 @@ def trend(request):
         request, 
         'job/trend.html', {
         'year': datetime.now().year,
-        'title':'各類科新增職缺數統計', 
-        'adminData': json.dumps(trend_data[0]),
-        'techData': json.dumps(trend_data[1]),
+        'title':'各職系開缺數統計', 
+        #'adminTop10': json.dumps(trend_data[0][-10:]),
+        #'techTop10': json.dumps(trend_data[1][-10:]),
+        'admin_list': json.dumps(table_data_list[0]),
+        'tech_list': json.dumps(table_data_list[1]),
+        'to_date': datetime.now().strftime("%Y/%m/%d")
     })
 
 def item(request, job_id):
@@ -223,3 +225,42 @@ def message(request, job_id):
             return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')
     else:
         raise Http404()
+
+
+def dept(request):
+    jobs = Job.objects.all().values('org_name').annotate(num=Count('id')).order_by('num')
+    job_data_list = list()
+    for job in jobs:
+        job_data_list.append([job['org_name'], job['num']])
+
+    return render(
+        request, 
+        'job/dept.html', {
+        'year': datetime.now().year,
+        'title':'各機關開缺數統計', 
+        'job_list': json.dumps(job_data_list),
+        'to_date': datetime.now().strftime("%Y/%m/%d")
+    })
+
+
+def dept_ajax(request):
+    if request.is_ajax() and request.method == 'POST':
+        if request.POST.get('action') == 'get':
+            try:
+                job_data_list = list()
+                if request.POST.get('sysnam'):
+                    dept = escape(request.POST.get('dept'))
+                    sysnam= escape(request.POST.get('sysnam'))
+                    jobs = Job.objects.filter(org_name=dept, sysnam=sysnam)
+                    for job in jobs:
+                        latest_date = list(JobHistory.objects.filter(job__id=job.id).values('date_from').order_by('-date_from'))[0]
+                        latest_date = latest_date['date_from'].strftime('%Y/%m/%d')
+                        job_data_list.append([job.org_name, job.sysnam, latest_date, job.title, job.rank_from, job.rank_to, job.work_addr, job.id])
+                else:  # only request.POST.get('dept')
+                    dept = escape(request.POST.get('dept'))
+                    jobs = Job.objects.filter(org_name=dept).values('sysnam').annotate(num=Count('id')).order_by('num')
+                    for job in jobs:
+                        job_data_list.append([job['sysnam'], job['num']])
+                return HttpResponse(json.dumps({'succeeded': True, 'data': job_data_list}), content_type='application/json')
+            except Exception as e:
+                return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')

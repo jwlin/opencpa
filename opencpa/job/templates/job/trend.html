@@ -2,72 +2,66 @@
 
 {% load staticfiles %}
 
-{% block head-scripts %}
-<script type="text/javascript">
-	window.onload = function () {
-		var adminData = {{adminData|safe}} 
-		var adminChart = new CanvasJS.Chart("adminChart", {
-			animationEnabled: true,
-			axisX:{
-				interval: 1,
-				gridThickness: 0,
-				labelFontSize: 12,
-				labelFontStyle: "normal",
-				labelFontWeight: "normal",
-				labelFontFamily: "Lucida Sans Unicode"
-			},
-			data: [{
-				type: "bar",
-				name: "sysname",
-				axisYType: "secondary",
-				color: "steelblue",
-				dataPoints: adminData, 
-			}]
-		});
-		adminChart.render();
-
-		var techData = {{techData|safe}} 
-		var techChart = new CanvasJS.Chart("techChart", {
-			animationEnabled: true,
-			axisX:{
-				interval: 1,
-				gridThickness: 0,
-				labelFontSize: 12,
-				labelFontStyle: "normal",
-				labelFontWeight: "normal",
-				labelFontFamily: "Lucida Sans Unicode"
-			},
-			data: [{
-				type: "bar",
-				name: "sysname",
-				axisYType: "secondary",
-				color: "steelblue",
-				dataPoints: techData
-			}]
-		});
-		techChart.render();
-	}
-</script>
-
+{% block head-styles %}
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css">
 {% endblock %}
 
+
 {% block navbar %}
-<li><a href="{% url 'job:trend' %}">{{title}} (統計起始日期：{{start_date | default:"2015/04/17"}})</a></li>
+<li><a href="{% url 'job:trend' %}">{{title}}</a></li>
 {% endblock %}
 
 {% block navbar-right %}
 {% endblock%}
 
 {% block content %}
-<h4>行政類</h4>
-<div id="adminChart" style="height: 500px; width: 100%;"></div>
-<hr>
-<h4>技術類</h4>
-<div id="techChart" style="height: 500px; width: 100%;"></div>
+<h3 style="text-align: center;">{{title}} (資料日期：{{start_date | default:"2015/04/17"}} - {{to_date}} )</h3>
+<div class="row">
+  <div class="col-md-6">
+  	<h4 style="text-align: center;">行政類</h4>
+	<table id="adminTable" class="display compact" width="100%"></table>
+  </div>
+  <div class="col-md-6">
+  	<h4 style="text-align: center;">技術類</h4>
+	<table id="techTable" class="display compact" width="100%"></table>
+  </div>
+</div>
 
 {% endblock%}
 
 {% block scripts %}
-    <script src="{% static 'job/scripts/canvasjs.min.js' %}"></script>
+	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" charset="utf8">
+	var dataSet = {{admin_list|safe}}
+	$(document).ready(function() {
+	    $('#adminTable').DataTable( {
+			data: dataSet,
+			order: [[ 1, "desc" ]],
+			columns: [
+				{ title: "職系" },
+				{ title: "開缺數" },
+			],
+			language: {
+		    	"search": "搜尋職系:",
+				"searchPlaceholder": "例: 圖書"
+			}
+		} );
+	} );
+	var dataSet2 = {{tech_list|safe}}
+	$(document).ready(function() {
+	    $('#techTable').DataTable( {
+			data: dataSet2,
+			order: [[ 1, "desc" ]],
+			columns: [
+				{ title: "職系" },
+				{ title: "開缺數" },
+			],
+			language: {
+		    	"search": "搜尋職系:",
+				"searchPlaceholder": "例: 電子"
+			}
+		} );
+	} );
+	</script>
 {% endblock %}
 

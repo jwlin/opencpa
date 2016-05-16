@@ -37,6 +37,7 @@ $(function () { // document ready
 
 		// check specific qualifications
 		var qual = [];
+        if (jobdata["is_resume_required"]) qual.push("<a href='http://web3.dgpa.gov.tw/want03front/doc/103_User%20Manual_Resume.htm' target='_blank'>✔同意開放簡歷</a>");
 		if (jobdata["is_handicap"]) qual.push("✔歡迎身障應徵");
 		if (jobdata["is_orig"]) qual.push("✔歡迎原民應徵");
 		if (jobdata["is_local_orig"]) qual.push("✔原民地區職缺");
@@ -58,7 +59,7 @@ $(function () { // document ready
 	}
 
 	// check history count and info
-	detail += "<dt>開缺紀錄</dt><dd>";
+	detail += "<dt>開缺紀錄</dt><dd>(" + historydata.length + " 次) ";
 	var his_date = [];
 	historydata.forEach(function(dates) {
 		his_date.push(dates["date_from"].replace(/-/g,"/") + " - " + dates["date_to"].replace(/-/g,"/"));

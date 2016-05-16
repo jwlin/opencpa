@@ -7,6 +7,7 @@ from django.conf import settings
 from os import path
 from bs4 import BeautifulSoup
 
+
 def getxml(xml_path):
     resp = ''
     if '?GETJOB=Y' in xml_path:
@@ -29,8 +30,8 @@ def getxml(xml_path):
         resp = requests.post(xml_path, verify=False, stream=True, data=formData, headers=header)
         resp = resp.raw
     
-    tree = ET.parse(resp)
-    #tree = ET.parse('today.xml')
+    #tree = ET.parse(resp)
+    tree = ET.parse('today.xml')
     root = tree.getroot()
     unqualified_list = [] # 非公務人員
     with open(path.join(settings.BASE_DIR, 'job', 'filters', 'unqualified-list.txt')) as fp:
@@ -174,8 +175,43 @@ def split_sysnam(sysnam):
     discards = [u'任用資格', u'預估缺', u'秘書室', u'6204', u'技術類']
     for discard in discards:
         sysnam = sysnam.replace(discard, '')
-    splitters = [u'、', u'或', u'及', u'/']
-    for spliter in splitters:
-        if spliter in sysnam:
-            return sysnam.split(spliter)
-    return [sysnam]
+    splitters = [u'、', u'或', u'及', u'/', u'含', ',']
+    # first pass
+    sysnam_list = list()
+    for splitter in splitters:
+        if splitter in sysnam:
+            sysnam_list = sysnam.split(splitter)
+            break
+    # second pass
+    new_sysnam_list = list()
+    if sysnam_list:
+        checked = False
+        for splitter in splitters:
+            new_sysnam_list = list()
+            if checked:
+                break
+            for nam in sysnam_list:
+                if splitter in nam:
+                    new_sysnam_list += nam.split(splitter)
+                    checked = True
+                else:
+                    new_sysnam_list.append(nam)
+    if new_sysnam_list:
+        return new_sysnam_list
+    elif sysnam_list:
+        return sysnam_list
+    else:
+        return [sysnam]
+
+
+def isResumeRequired(url):
+    if not url:
+        return False
+    resp = requests.get(url, verify=False)
+    soup = BeautifulSoup(resp.text)
+    if resp.status_code != 200:
+        return False
+    if u'本職缺啟用現職應徵人員調閱簡歷功能，現職應徵者需同意開放簡歷給徵才機關調閱' in resp.text:
+        return True
+    else:
+        return False

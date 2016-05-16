@@ -1,0 +1,45 @@
+{% extends "job/layout.html" %}
+
+{% load staticfiles %}
+
+{% block head-styles %}
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css">
+{% endblock %}
+
+
+{% block navbar %}
+<li><a href="{% url 'job:dept' %}">{{title}}</a></li>
+{% endblock %}
+
+{% block navbar-right %}
+{% endblock%}
+
+{% block content %}
+<h3 style="text-align: center;">{{title}} (資料日期：{{start_date | default:"2015/04/17"}} - {{to_date}} )</h3>
+<div class="row">
+  <div class="col-md-6">
+	<h4 style="text-align: center;">開缺機關</h4>
+	<table id="deptTable" class="display compact" width="100%"></table>
+  </div>
+  <div class="col-md-6" id="sysnam_div">
+	<h4 style="text-align: center;"><span id="dept_name">&#8592;請先點選左側機關</span></h4>
+	<table id="sysnamTable" class="display compact" width="100%"></table>
+  </div>
+</div>
+<hr>
+<div class="row">
+  <div class="col-md-12" id="detail_div">
+	<h4 style="text-align: center;"><span id="dept_name_2"></span> <span id="sys_name">請先點選右上方職系&#8599;</span></h4>
+	<table id="detailTable" class="display compact" width="100%"></table>
+  </div>
+</div>
+
+{% endblock%}
+
+{% block scripts %}
+	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" charset="utf8"> var dataSet = {{job_list|safe}}</script>
+	<script type="text/javascript" charset="utf8" src="{% static 'job/scripts/spin.min.js' %}"></script>
+	<script type="text/javascript" charset="utf8" src="{% static 'job/scripts/dept.js' %}"></script>
+{% endblock %}
+

@@ -37,6 +37,8 @@
             <li><a href="#">離島地區</a></li>
         </ul>
     </li>
+	<li><a href="{% url 'job:dept' %}" target="_blank">各機關統計 <span class="label label-info">NEW!</span></a></li>
+	<li><a href="{% url 'job:trend' %}" target="_blank">各職系統計 <span class="label label-info">NEW!</span></a></li>
 	<li><a href="./about">關於</a></li>
 {% endblock %}
 
@@ -76,7 +78,7 @@
 </div>
 <div class="col-md-3">
   <ul class="list-group">
-	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">最新留言</li>
+	<li class="list-group-item" style="background-color: #428bca; text-align: center; color: white;">最新留言</li>
 	{% if messages %}
 	  {% for message in messages %}
 	  <li class="list-group-item"><a href="{{message.jobid}}" target="_blank">{{message.jobname}}</a><br>{{message.content}}</li>
@@ -86,10 +88,8 @@
 	{% endif %}
   </ul>
   <ul class="list-group">
-	<li class="list-group-item" style="background-color: #337AB7; text-align: center; color: white;">
-		昨日新增職缺數 (
-		<a href="{% url 'job:trend' %}" target="_blank" style="color: gold;">各類科統計</a>
-		)
+	<li class="list-group-item" style="background-color: #428bca; text-align: center; color: white;">
+		昨日新增職缺數
 	</li>
 	<li class="list-group-item">
 		<h4>行政類</h4>
