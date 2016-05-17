@@ -12,24 +12,24 @@
 {% endblock %}
 
 {% block navbar-right %}
+    <li><a>資料日期：{{start_date | default:"2015/04/17"}} - {{to_date}}</a></li>
 {% endblock%}
 
 {% block content %}
-<h3 style="text-align: center;">{{title}} (資料日期：{{start_date | default:"2015/04/17"}} - {{to_date}} )</h3>
 <div class="row">
   <div class="col-md-6">
-	<h4 style="text-align: center;">1. 選擇機關 (請善用搜尋)</h4>
+	<h4 style="text-align: center; font-weight: bold;">1. 選擇機關 (請善用搜尋)</h4>
 	<table id="deptTable" class="display compact" width="100%"></table>
   </div>
   <div class="col-md-6" id="sysnam_div">
-	<h4 style="text-align: center;"><span id="dept_name">2. 選定機關後再選擇職系</span></h4>
+	<h4 style="text-align: center; font-weight: bold;"><span id="dept_name">2. 選定機關後再選擇職系</span></h4>
 	<table id="sysnamTable" class="display compact" width="100%"></table>
   </div>
 </div>
 <hr>
 <div class="row">
   <div class="col-md-12" id="detail_div">
-	<h4 style="text-align: center;"><span id="dept_name_2"></span> <span id="sys_name">3. 選定職系後職缺列表如下</span></h4>
+	<h4 style="text-align: center; font-weight: bold;"><span id="dept_name_2"></span> <span id="sys_name">3. 選定職系後職缺列表如下</span></h4>
 	<table id="detailTable" class="display compact" width="100%"></table>
   </div>
 </div>
