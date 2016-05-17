@@ -10,12 +10,15 @@ $(document).ready(function() {
 		data: dataSet,
 		order: [[ 1, "desc" ]],
 		columns: [
-			{ title: "機關 (點擊任一列取得詳細資料)" },
+			{ title: "機關 (點選任一列)" },
 			{ title: "開缺數" },
 		], 
 		language: {
 		    "search": "搜尋機關名稱:",
 			"searchPlaceholder": "例: 北市"
+		},
+		select: {
+			style: 'single'
 		}
 	} );
 	
@@ -23,12 +26,15 @@ $(document).ready(function() {
 		//data: ,
 		order: [[ 1, "desc" ]],
 		columns: [
-			{ title: "職系" },
+			{ title: "職系 (點選任一列)" },
 			{ title: "開缺數" },
 		],
 		language: {
 		    "search": "搜尋職系:",
 			"searchPlaceholder": "例: 土木"
+		},
+		select: {
+			style: 'single'
 		}
 	} );
 
@@ -60,6 +66,9 @@ $(document).ready(function() {
 	} );
 
 	$('#deptTable tbody').on('click', 'tr', function () {
+		if (deptTable.row( this ).data() == null) {
+			return;
+		}
 		var rowdata = deptTable.row( this ).data();
 		if (spinner_sysnam == null) {
 			spinner_sysnam = new Spinner({color:'#000', lines: 12}).spin(sysnam_div);
@@ -83,6 +92,9 @@ $(document).ready(function() {
 	} );
     
 	$('#sysnamTable tbody').on('click', 'tr', function () {
+		if (sysnamTable.row( this ).data() == null) {
+			return;
+		}
 		var rowdata = sysnamTable.row( this ).data();
 		var dept_name = $('#dept_name').text();
 		if (spinner_sysnam == null) {
