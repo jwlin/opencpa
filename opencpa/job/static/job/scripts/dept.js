@@ -66,9 +66,6 @@ $(document).ready(function() {
 	} );
 
 	$('#deptTable tbody').on('click', 'tr', function () {
-		if (deptTable.row( this ).data() == null) {
-			return;
-		}
 		var rowdata = deptTable.row( this ).data();
 		if (spinner_sysnam == null) {
 			spinner_sysnam = new Spinner({color:'#000', lines: 12}).spin(sysnam_div);
