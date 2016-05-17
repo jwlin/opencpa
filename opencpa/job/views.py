@@ -143,7 +143,7 @@ def trend(request):
         #'techTop10': json.dumps(trend_data[1][-10:]),
         'admin_list': json.dumps(table_data_list[0]),
         'tech_list': json.dumps(table_data_list[1]),
-        'to_date': datetime.now().strftime("%Y/%m/%d")
+        'to_date': (datetime.now() + timedelta(hours=8)).strftime("%Y/%m/%d")
     })
 
 def item(request, job_id):
@@ -239,7 +239,7 @@ def dept(request):
         'year': datetime.now().year,
         'title':'各機關開缺數統計', 
         'job_list': json.dumps(job_data_list),
-        'to_date': datetime.now().strftime("%Y/%m/%d")
+        'to_date': (datetime.now()+timedelta(hours=8)).strftime("%Y/%m/%d")
     })
 
 
