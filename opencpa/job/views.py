@@ -264,3 +264,19 @@ def dept_ajax(request):
                 return HttpResponse(json.dumps({'succeeded': True, 'data': job_data_list}), content_type='application/json')
             except Exception as e:
                 return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')
+
+def trend_ajax(request):
+    if request.is_ajax() and request.method == 'POST':
+        if request.POST.get('action') == 'get':
+            try:
+                org_data_list = list()
+                if request.POST.get('sysnam'):
+                    sysnam= escape(request.POST.get('sysnam'))
+                    orgs = Job.objects.filter(sysnam=sysnam).values('org_name').annotate(num=Count('id')).order_by('num')
+                    for org in orgs:
+                        org_data_list.append([org['org_name'], org['num']])
+                    return HttpResponse(json.dumps({'succeeded': True, 'data': org_data_list}), content_type='application/json')
+                else:
+                    return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')
+            except Exception as e:
+                return HttpResponse(json.dumps({'succeeded': False}), content_type='application/json')

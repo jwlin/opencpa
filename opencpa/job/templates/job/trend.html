@@ -17,51 +17,33 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-6" id="admin_div">
   	<h4 style="text-align: center; font-weight: bold;">行政類</h4>
 	<table id="adminTable" class="display compact" width="100%"></table>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-6" id="tech_div">
   	<h4 style="text-align: center; font-weight: bold;">技術類</h4>
 	<table id="techTable" class="display compact" width="100%"></table>
+  </div>
+</div>
+<hr>
+<div class="row">
+  <div class="col-md-12" id="detail_div">
+  	<h4 style="text-align: center; font-weight: bold;"><span id="detail_title">開缺機關列表</span></h4>
+	<table id="detailTable" class="display compact" width="100%"></table>
   </div>
 </div>
 
 {% endblock%}
 
 {% block scripts %}
-	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" charset="utf8">
 	var dataSet = {{admin_list|safe}}
-	$(document).ready(function() {
-	    $('#adminTable').DataTable( {
-			data: dataSet,
-			order: [[ 1, "desc" ]],
-			columns: [
-				{ title: "職系" },
-				{ title: "開缺數" },
-			],
-			language: {
-		    	"search": "搜尋職系:",
-				"searchPlaceholder": "例: 圖書"
-			}
-		} );
-	} );
 	var dataSet2 = {{tech_list|safe}}
-	$(document).ready(function() {
-	    $('#techTable').DataTable( {
-			data: dataSet2,
-			order: [[ 1, "desc" ]],
-			columns: [
-				{ title: "職系" },
-				{ title: "開缺數" },
-			],
-			language: {
-		    	"search": "搜尋職系:",
-				"searchPlaceholder": "例: 電子"
-			}
-		} );
-	} );
 	</script>
+	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/select/1.1.2/js/dataTables.select.min.js"></script>
+	<script type="text/javascript" charset="utf8" src="{% static 'job/scripts/spin.min.js' %}"></script>
+	<script type="text/javascript" charset="utf8" src="{% static 'job/scripts/trend.js' %}"></script>
 {% endblock %}
 
