@@ -78,7 +78,7 @@ if (twDate != ur.last_update_day) or (not CurrentJob.objects.all()): # data is o
         c_job.contact = xml_job['contact']
         c_job.url = xml_job['url']
         c_job.view_url = xml_job['view_url']
-        c_job.is_resume_required = c_job.job.is_resume_required
+        c_job.is_resume_required = Job.objects.get(id=c_job.job.id).is_resume_required
                 
         if ( c_job.date_to <= (twDate + timedelta(days=2)) ):
             c_job.isExpiring = True
