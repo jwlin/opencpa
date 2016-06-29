@@ -92,10 +92,12 @@ def getxml(xml_path):
 def replaceChNum(s):
     pattern1 = [u'一',u'二',u'三',u'四',u'五',u'六',u'七',u'八',u'九',u'十']
     pattern2 = [u'壹',u'貳',u'參',u'肆',u'伍',u'陸',u'柒',u'捌',u'玖',u'拾']
+    pattern3 = [u'１',u'２',u'３',u'４',u'５',u'６',u'７',u'８',u'９',u'１０']
     replacement = ['1','2','3','4','5','6','7','8','9','10']
     for i in range(0,10):
         s = s.replace(pattern1[i], replacement[i])
         s = s.replace(pattern2[i], replacement[i])
+        s = s.replace(pattern3[i], replacement[i])
     s = s.replace(u'乙', '1')
     # delete extra 0. ex. 104 -> 14
     s = re.sub('(10[0-9])',lambda m: m.group(0).replace('10', '1'), s)
@@ -187,9 +189,9 @@ def split_sysnam(sysnam):
     if sysnam_list:
         checked = False
         for splitter in splitters:
-            new_sysnam_list = list()
             if checked:
                 break
+            new_sysnam_list = list()
             for nam in sysnam_list:
                 if splitter in nam:
                     new_sysnam_list += nam.split(splitter)

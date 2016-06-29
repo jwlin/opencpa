@@ -1,7 +1,7 @@
 # vim: set ts=4 sw=4 et: -*- coding: utf-8 -*-
 
 from django.test import TestCase
-from myutil import split_sysnam, isResumeRequired
+from myutil import split_sysnam, isResumeRequired, replaceChNum
 
 class MyUtilTest(TestCase):
     def test_split_sysnam(self):
@@ -39,3 +39,7 @@ class MyUtilTest(TestCase):
         self.assertTrue(isResumeRequired('http://web3.dgpa.gov.tw/want03front/ap/wantf00001_1.aspx?work_id=1050300230'))
         
 
+    def test_replaceChNum(self):
+        s = u'名額１符合下列各款資格者 １、曾經銓敘審定合格實授委任第3職等以上之公務人員【２、未曾受懲戒或行政處分，品行端'
+        oracle = u'名額1符合下列各款資格者 1、曾經銓敘審定合格實授委任第3職等以上之公務人員【2、未曾受懲戒或行政處分，品行端'
+        self.assertEqual(replaceChNum(s), oracle)
