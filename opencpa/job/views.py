@@ -50,7 +50,7 @@ def index(request):
         curJobIds = CurrentJob.objects.all().values('job_id')
         jmsgs = JobMessage.objects.all().filter(job__id__in=curJobIds).order_by('-last_modified')[:5]
         for jmsg in jmsgs:
-            j = CurrentJob.objects.get(job__id=jmsg.job.id)
+            j = CurrentJob.objects.filter(job__id=jmsg.job.id)[0]
             jobname = j.org_name + ' / ' + j.title
             if len(jobname) > 25: 
                 jobname = jobname[:25] + '..'
@@ -149,7 +149,7 @@ def trend(request):
 def item(request, job_id):
     isExpired = False
     try:
-        job = CurrentJob.objects.get(job__id=job_id)
+        job = CurrentJob.objects.filter(job__id=job_id)[0]
     except CurrentJob.DoesNotExist:
         isExpired = True
         try:
