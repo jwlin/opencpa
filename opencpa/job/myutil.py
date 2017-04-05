@@ -3,6 +3,7 @@
 import glob, re, json, codecs, requests, urllib2
 import xml.etree.ElementTree as ET
 import datetime
+import ssl
 from django.conf import settings
 from os import path
 from bs4 import BeautifulSoup
@@ -11,7 +12,10 @@ from bs4 import BeautifulSoup
 def getxml(xml_path):
     resp = ''
     if '?GETJOB=Y' in xml_path:
-        resp = urllib2.urlopen(xml_path)
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        resp = urllib2.urlopen(xml_path, context=ctx)
     else:
         # first HTTP request without form data
         resp = requests.get(xml_path, verify=False)

@@ -13,7 +13,7 @@ import django
 django.setup()
 
 #xml_url = 'https://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx'
-xml_url = 'http://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx?GETJOB=Y'
+xml_url = 'https://web3.dgpa.gov.tw/WANT03FRONT/AP/WANTF00003.aspx?GETJOB=Y'
 
 # ensure data in CurrentJob is up to date
 twDate = (datetime.utcnow() + timedelta(hours=8)).date()
@@ -55,7 +55,7 @@ if (twDate != ur.last_update_day) or (not CurrentJob.objects.all()): # data is o
         )
         if created:
             job = Job.objects.get(id=c_job.job.id)
-            job.is_resume_required = myutil.isResumeRequired(xml_job['view_url'])
+            job.is_resume_required = myutil.isResumeRequired(xml_job['view_url'].replace('http://', 'https://'))
             job.save()
         
         searchObj = re.search( r'(\d+)', xml_job['num'], re.M|re.I)
@@ -77,7 +77,7 @@ if (twDate != ur.last_update_day) or (not CurrentJob.objects.all()): # data is o
         c_job.work_quality = xml_job['work_quality'] if xml_job['work_quality'] else 'no data'
         c_job.contact = xml_job['contact']
         c_job.url = xml_job['url']
-        c_job.view_url = xml_job['view_url']
+        c_job.view_url = xml_job['view_url'].replace('http://', 'https://')
         c_job.is_resume_required = Job.objects.get(id=c_job.job.id).is_resume_required
                 
         if ( c_job.date_to <= (twDate + timedelta(days=2)) ):
