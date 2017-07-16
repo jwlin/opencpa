@@ -150,7 +150,7 @@ def item(request, job_id):
     isExpired = False
     try:
         job = CurrentJob.objects.filter(job__id=job_id)[0]
-    except CurrentJob.DoesNotExist:
+    except (CurrentJob.DoesNotExist, IndexError):
         isExpired = True
         try:
             job = Job.objects.get(id=job_id)
